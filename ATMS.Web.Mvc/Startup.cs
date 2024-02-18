@@ -1,3 +1,4 @@
+using ATMS.Web.API.AppServices;
 using ATMS.Web.API.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ATMS.Web.API;
+using AutoMapper;
+using System.Reflection;
+using ATMS.Web.API.Mapping;
 
 namespace ATMS.Web.Mvc
 {
@@ -25,9 +30,23 @@ namespace ATMS.Web.Mvc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Register Http Client to request/response 
+            services.AddHttpClient();
             // Register to use DB context
             services.AddDbContext<ATMContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllersWithViews();
+
+            // Create auto mapper configuration
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MappingProfile());
+            });
+            var mapper = mapperConfiguration.CreateMapper();
+            // Register auto mapper to services throught lifetime use
+            services.AddSingleton(mapper);
+
+            // Register sevices
+            services.AddScoped<IATMCardAppService, ATMCardAppService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,8 +66,6 @@ namespace ATMS.Web.Mvc
             app.UseStaticFiles();
 
             app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

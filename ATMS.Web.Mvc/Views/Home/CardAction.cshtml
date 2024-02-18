@@ -1,0 +1,137 @@
+﻿@using ATMS.Web.API.Models
+@using ATMS.Web.API.Helpers
+
+@model ATMS.Web.API.AppServices.Dtos.BankAccountDto
+@{
+    ViewData["Title"] = "Withdraw/Deposit";
+    Layout = null;
+    string statusMessage = (TempData[StatusMessage.ActionStatusMessage] ?? string.Empty) as string;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ATM</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="vh-100 d-flex justify-content-center align-items-center">
+        <div class="container">
+            @if (!string.IsNullOrEmpty(statusMessage))
+            {
+                <div class="row">
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-8">
+                        @await Html.PartialAsync(StatusMessage.ActionMessagePartial, statusMessage)
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+            }
+
+            <div class="row">
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-8">
+                    <div class="card">
+                        <div class="row no-gutters">
+                            <div class="col-md-12">
+                                <div class="card-body">
+                                    <h2 class="card-title">Available Balance: @Model.AvailableBalance.ToString("#,#00.00")</h2>
+                                    <section>
+                                        <form asp-action="ViewHistory" asp-asp-controller="Home" method="post">
+                                            <input type="hidden" asp-for="BankCardNumber" />
+                                            <input type="hidden" asp-for="AvailableBalance" />
+                                            <hr />
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-4 col-md-4 col-sm-12">
+                                                        <button type="button" class="btn btn-primary" onclick="updateBalance(@((int)EBalanceHistoryType.Withdraw))">Withdraw</button>
+                                                    </div>
+                                                    <div class="col-4 col-md-4 col-sm-12">
+                                                        <button type="button" class="btn btn-primary" onclick="updateBalance(@((int)EBalanceHistoryType.Deposite))">Deposit</button>
+                                                    </div>
+                                                    <div class="col-4 col-md-4 col-sm-12">
+                                                        <button type="button" class="btn btn-primary" onclick="showHistory()">History</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        function updateBalance(actionType) {
+            let obj = {
+                BankCardNumber: $("#BankCardNumber").val(),
+                AvailableBalance: $("#AvailableBalance").val(),
+                ActionType: actionType
+            };
+            $.ajax({
+                url: "/Home/UpdateBalanceModal",
+                type: "POST",
+                data: {
+                    input: obj
+                },
+                success: function (response) {
+                    $('#updateBalanceModal div.modal-content').html(response);
+                    $("#updateBalanceModal").modal('show');
+                },
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        }
+
+        function showHistory() {
+            $.ajax({
+                url: "/Home/ShowHistoryModal",
+                type: "POST",
+                data: {
+                    cardNumber: $("#BankCardNumber").val()
+                },
+                success: function (response) {
+                    $('#historyModal div.modal-content').html(response);
+                    $("#historyModal").modal('show');
+                },
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
+<div class="modal fade" id="updateBalanceModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="historyModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

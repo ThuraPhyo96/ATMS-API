@@ -1,0 +1,49 @@
+﻿@using ATMS.Web.API.Models
+@model ATMS.Web.API.AppServices.Dtos.BankAccountDto
+@{
+    Layout = null;
+    string label = Model.ActionType == (int)EBalanceHistoryType.Withdraw ? "Withdraw" : "Deposit";
+    ViewData["Title"] = label;
+}
+
+<div class="modal-header">
+    <h5 class="modal-title" id="createBankAccount">@label</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form asp-action="UpdateBalance" asp-controller="Home" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="BankCardNumber" />
+        <input type="hidden" asp-for="ActionType" />
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-12 col-md-12 col-sm-12">
+                    <label>Available Balance: @Model.AvailableBalance.ToString("#,#00.00")</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-4 col-md-4 col-sm-12">
+                    <label asp-for="Amount" class="control-label"></label>
+                </div>
+                <div class="col-8 col-md-8 col-sm-12">
+                    <input asp-for="Amount" class="form-control" />
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-12 col-md-12 col-sm-12 text-right">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="submit" value="@label" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
