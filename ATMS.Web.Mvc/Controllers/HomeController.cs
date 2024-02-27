@@ -37,19 +37,18 @@ namespace ATMS.Web.Mvc.Controllers
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var response = await client.PostAsync($"{BaseUrl}/atmcard/cardlogin", new StringContent(bankCardJson, Encoding.UTF8, "application/json"));
+                var response = await client.PostAsync($"{BaseUrl}/atmcard", new StringContent(bankCardJson, Encoding.UTF8, "application/json"));
 
-                string responseJson = await response.Content.ReadAsStringAsync();
-                BankAccountDto result = JsonConvert.DeserializeObject<BankAccountDto>(responseJson);
-
-                if (result.StatusCode == StatusCodes.Status200OK)
+                if (response.IsSuccessStatusCode)
                 {
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    BankAccountDto result = JsonConvert.DeserializeObject<BankAccountDto>(responseJson);
                     TempData[StatusMessage.BankCardInfo] = responseJson;
                     return RedirectToAction("CardAction");
                 }
                 else
                 {
-                    TempData[StatusMessage.ActionStatusMessage] = result.StatusMessage;
+                    TempData[StatusMessage.ActionStatusMessage] = JsonConvert.DeserializeObject<dynamic>(response.Content.ReadAsStringAsync().Result);
                 }
             }
             catch (ArgumentNullException)
@@ -94,24 +93,38 @@ namespace ATMS.Web.Mvc.Controllers
         {
             try
             {
-                string balanceJson = JsonConvert.SerializeObject(input);
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                using var bankCardClient = new HttpClient();
+                bankCardClient.DefaultRequestHeaders.Accept.Clear();
+                var getBankCardResponse = await bankCardClient.GetAsync($"{BaseUrl}/atmcard/{input.BankCardNumber}/false");
 
-                var response = await client.PostAsync($"{BaseUrl}/atmcard/updatebalance", new StringContent(balanceJson, Encoding.UTF8, "application/json"));
-
-                string responseJson = await response.Content.ReadAsStringAsync();
-                BankAccountDto result = JsonConvert.DeserializeObject<BankAccountDto>(responseJson);
-
-                if (result.StatusCode == StatusCodes.Status200OK)
+                if (getBankCardResponse.IsSuccessStatusCode)
                 {
-                    TempData[StatusMessage.BankCardInfo] = responseJson;
-                    TempData[StatusMessage.ActionStatusMessage] = result.StatusMessage;
+                    string bankCardResponseJson = await getBankCardResponse.Content.ReadAsStringAsync();
+                    BankCardDto bankCard = JsonConvert.DeserializeObject<BankCardDto>(bankCardResponseJson);
+                    input.PIN = bankCard.PIN;
+
+                    string balanceJson = JsonConvert.SerializeObject(input);
+                    using var client = new HttpClient();
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    var response = await client.PutAsync($"{BaseUrl}/atmcard", new StringContent(balanceJson, Encoding.UTF8, "application/json"));
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string responseJson = await response.Content.ReadAsStringAsync();
+                        BankAccountDto result = JsonConvert.DeserializeObject<BankAccountDto>(responseJson);
+                        TempData[StatusMessage.BankCardInfo] = responseJson;
+                        TempData[StatusMessage.ActionStatusMessage] = result.StatusMessage;
+                    }
+                    else
+                    {
+                        TempData[StatusMessage.ActionStatusMessage] = JsonConvert.DeserializeObject<dynamic>(response.Content.ReadAsStringAsync().Result);
+                    }
                 }
                 else
                 {
-                    TempData[StatusMessage.ActionStatusMessage] = result.StatusMessage;
+                    TempData[StatusMessage.ActionStatusMessage] = JsonConvert.DeserializeObject<dynamic>(getBankCardResponse.Content.ReadAsStringAsync().Result);
                 }
             }
             catch
@@ -128,20 +141,18 @@ namespace ATMS.Web.Mvc.Controllers
                 string balanceJson = JsonConvert.SerializeObject(cardNumber);
                 using var client = new HttpClient();
                 client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var response = await client.PostAsync($"{BaseUrl}/atmcard/gethistorybycardnumber", new StringContent(balanceJson, Encoding.UTF8, "application/json"));
+                var response = await client.GetAsync($"{BaseUrl}/atmcard/{cardNumber}/true");
 
-                string responseJson = await response.Content.ReadAsStringAsync();
-                BalanceHistoryByCardNumberDto result = JsonConvert.DeserializeObject<BalanceHistoryByCardNumberDto>(responseJson);
-
-                if (result.StatusCode == StatusCodes.Status200OK)
+                if (response.IsSuccessStatusCode)
                 {
+                    string responseJson = await response.Content.ReadAsStringAsync();
+                    BalanceHistoryByCardNumberDto result = JsonConvert.DeserializeObject<BalanceHistoryByCardNumberDto>(responseJson);
                     return PartialView("_ShowHistoryModal", result);
                 }
                 else
                 {
-                    TempData[StatusMessage.ActionStatusMessage] = result.StatusMessage;
+                    TempData[StatusMessage.ActionStatusMessage] = JsonConvert.DeserializeObject<dynamic>(response.Content.ReadAsStringAsync().Result);
                 }
             }
             catch

@@ -1,5 +1,6 @@
 ﻿using ATMS.Web.API.AppServices;
 using ATMS.Web.API.AppServices.Dtos;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Collections.Generic;
@@ -20,25 +21,46 @@ namespace ATMS.Web.API.Controllers
             _aTMCardAppService = aTMCardAppService;
         }
 
-        // POST api/<ATMCardController>
-        [HttpPost("cardlogin")]
-        public async Task<BankAccountDto> CardLogin([FromBody] CheckBankCardDto input)
+        [HttpPost()]
+        public async Task<IActionResult> PostAsync([FromBody] CheckBankCardDto input)
         {
-            return await _aTMCardAppService.CardLogin(input);
+            BankAccountDto result = await _aTMCardAppService.CardLogin(input);
+            if (result.StatusCode == StatusCodes.Status200OK)
+                return Ok(result);
+            else
+                return Unauthorized(result.StatusMessage);
         }
 
-        // POST api/<ATMCardController>
-        [HttpPost("updatebalance")]
-        public async Task<BankAccountDto> UpdateBalance([FromBody] UpdateBalanceByCustomerDto input)
+        [HttpPut()]
+        public async Task<IActionResult> PutAsync([FromBody] UpdateBalanceByCustomerDto input)
         {
-            return await _aTMCardAppService.UpdateBalance(input);
+            BankAccountDto result = await _aTMCardAppService.UpdateBalance(input);
+            if (result.StatusCode == StatusCodes.Status200OK)
+                return Ok(result);
+            else
+                return Unauthorized(result.StatusMessage);
         }
 
-        // POST api/<ATMCardController>
-        [HttpPost("gethistorybycardnumber")]
-        public async Task<BalanceHistoryByCardNumberDto> GetHistoryByCardNumber([FromBody] string input)
+        [HttpGet("{cardNumber}/{viewHistory}")]
+        public async Task<IActionResult> GetAsync(string cardNumber, bool viewHistory)
         {
-            return await _aTMCardAppService.GetAllHistoryByCardNumber(input);
+            if (viewHistory)
+            {
+                BalanceHistoryByCardNumberDto result = await _aTMCardAppService.GetAllHistoryByCardNumber(cardNumber);
+
+                if (result.StatusCode == StatusCodes.Status200OK)
+                    return Ok(result);
+                else
+                    return NotFound(result.StatusMessage);
+            }
+            else
+            {
+                BankCardDto result = await _aTMCardAppService.GetBankCardByCardNumber(cardNumber);
+                if (result.StatusCode == StatusCodes.Status200OK)
+                    return Ok(result);
+                else
+                    return NotFound(result.StatusMessage);
+            }
         }
     }
 }

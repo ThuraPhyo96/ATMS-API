@@ -35,6 +35,12 @@ namespace ATMS.Web.API.AppServices.Dtos
     public class UpdateBalanceByCustomerDto
     {
         public string BankCardNumber { get; set; }
+
+        [Required]
+        [Display(Name = "PIN")]
+        [DataType(DataType.Password)]
+        [StringLength(6)]
+        public string PIN { get; set; }
         public int ActionType { get; set; }
         public decimal Amount { get; set; }
     }

@@ -32,12 +32,12 @@ namespace ATMS.Web.API.AppServices
                   x.PIN == input.PIN);
 
             if (!isValid)
-                return new BankAccountDto(StatusCodes.Status404NotFound, StatusMessage.InvalidCard, input.BankCardNumber, balance: 0m);
+                return new BankAccountDto(StatusCodes.Status401Unauthorized, StatusMessage.InvalidCard, input.BankCardNumber, balance: 0m);
 
             var card = await _context.BankCards.FirstOrDefaultAsync(x => x.BankCardNumber == input.BankCardNumber);
             var account = await _context.BankAccounts.FirstOrDefaultAsync(x => x.BankAccountId == card.BankAccountId);
             if (account == null)
-                return new BankAccountDto(StatusCodes.Status404NotFound, StatusMessage.InvalidCard, input.BankCardNumber, balance: 0m);
+                return new BankAccountDto(StatusCodes.Status401Unauthorized, StatusMessage.InvalidCard, input.BankCardNumber, balance: 0m);
 
             return new BankAccountDto(StatusCodes.Status200OK, string.Empty, input.BankCardNumber, balance: account.Balance);
         }
@@ -48,10 +48,11 @@ namespace ATMS.Web.API.AppServices
         {
             var isValidCard = await _context.BankCards
                  .AsNoTracking()
-                 .AnyAsync(x => x.BankCardNumber == input.BankCardNumber);
+                 .AnyAsync(x => x.BankCardNumber == input.BankCardNumber &&
+                  x.PIN == input.PIN);
 
             if (!isValidCard)
-                return new BankAccountDto(StatusCodes.Status404NotFound, StatusMessage.InvalidCard, input.BankCardNumber, balance: 0m);
+                return new BankAccountDto(StatusCodes.Status401Unauthorized, StatusMessage.InvalidCard, input.BankCardNumber, balance: 0m);
 
             var card = await _context.BankCards.FirstOrDefaultAsync(x => x.BankCardNumber == input.BankCardNumber);
             var account = await _context.BankAccounts.FirstOrDefaultAsync(x => x.BankAccountId == card.BankAccountId);
@@ -60,7 +61,7 @@ namespace ATMS.Web.API.AppServices
             if (input.ActionType == (int)EBalanceHistoryType.Withdraw)
             {
                 if (input.Amount > account.Balance - 1000)
-                    return new BankAccountDto(StatusCodes.Status406NotAcceptable, StatusMessage.NotEnoughAmount, input.BankCardNumber, balance: 0m);
+                    return new BankAccountDto(StatusCodes.Status405MethodNotAllowed, StatusMessage.NotEnoughAmount, input.BankCardNumber, balance: 0m);
 
                 account.Balance -= input.Amount;
                 message = StatusMessage.WithdrawSuccess;
@@ -102,6 +103,17 @@ namespace ATMS.Web.API.AppServices
             var histories = _mapper.Map<List<BalanceHistoryDto>>(objs);
 
             return new BalanceHistoryByCardNumberDto(StatusCodes.Status200OK, StatusMessage.ValidCard, histories);
+        }
+
+        public async Task<BankCardDto> GetBankCardByCardNumber(string cardNumber)
+        {
+            var card = await _context.BankCards.FirstOrDefaultAsync(x => x.BankCardNumber == cardNumber);
+            if (card == null)
+                return new BankCardDto(StatusCodes.Status404NotFound, StatusMessage.InvalidCard);
+
+            BankCardDto bankCard = _mapper.Map<BankCardDto>(card);
+            bankCard.StatusCode = StatusCodes.Status200OK;
+            return bankCard;
         }
         #endregion
     }
