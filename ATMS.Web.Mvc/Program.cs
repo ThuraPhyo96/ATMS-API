@@ -1,4 +1,3 @@
-using ATMS.Web.API.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,24 +14,26 @@ namespace ATMS.Web.Mvc
     {
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
+            CreateHostBuilder(args).Build().Run();
 
-            using (var scope = host.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
+            //var host = CreateHostBuilder(args).Build();
 
-                try
-                {
-                    SeedData.Initialize(services);
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred seeding the DB.");
-                }
-            }
+            //using (var scope = host.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
 
-            host.Run();
+            //    try
+            //    {
+            //        SeedData.Initialize(services);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        var logger = services.GetRequiredService<ILogger<Program>>();
+            //        logger.LogError(ex, "An error occurred seeding the DB.");
+            //    }
+            //}
+
+            //host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

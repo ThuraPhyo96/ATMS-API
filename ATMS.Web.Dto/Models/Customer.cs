@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System;
 
-namespace ATMS.Web.API.Models
+namespace ATMS.Web.Dto.Models
 {
     public class Customer
     {

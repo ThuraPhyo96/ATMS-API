@@ -1,13 +1,13 @@
-﻿using ATMS.Web.API.AppServices.Dtos;
-using ATMS.Web.API.Data;
-using ATMS.Web.API.Helpers;
-using ATMS.Web.API.Models;
+﻿using ATMS.Web.API.Data;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ATMS.Web.Dto.Dtos;
+using ATMS.Web.Dto.Helpers;
+using ATMS.Web.Dto.Models;
 
 namespace ATMS.Web.API.AppServices
 {

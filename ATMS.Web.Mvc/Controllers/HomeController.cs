@@ -1,10 +1,7 @@
-﻿using ATMS.Web.API.AppServices.Dtos;
-using ATMS.Web.API.Helpers;
-using ATMS.Web.Mvc.Models;
+﻿using ATMS.Web.Mvc.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient.Server;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -15,12 +12,17 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using ATMS.Web.Dto.Dtos;
+using ATMS.Web.Dto.Helpers;
+using Microsoft.Extensions.Configuration;
 
 namespace ATMS.Web.Mvc.Controllers
 {
     public class HomeController : BaseController
     {
-        public HomeController(IHttpClientFactory httpClientFactory) : base(httpClientFactory) { }
+        public HomeController(IHttpClientFactory httpClientFactory, IConfiguration configuration) : base(httpClientFactory, configuration)
+        {
+        }
 
         public IActionResult Index()
         {

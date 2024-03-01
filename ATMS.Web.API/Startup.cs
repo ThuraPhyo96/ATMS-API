@@ -1,8 +1,11 @@
 using ATMS.Web.API.AppServices;
+using ATMS.Web.API.Data;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ATMS.Web.API.Mapping;
 
 namespace ATMS.Web.API
 {
@@ -28,6 +32,34 @@ namespace ATMS.Web.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddDbContext<ATMContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            // Create auto mapper configuration
+            var mapperConfiguration = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MappingProfile());
+            });
+            var mapper = mapperConfiguration.CreateMapper();
+            // Register auto mapper to services throught lifetime use
+            services.AddSingleton(mapper);
+
+            // Register sevices
+            services.AddScoped<IATMCardAppService, ATMCardAppService>();
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "ATM Card API",
+                    Version = "v1",
+                    Description = "To Test ATM Card API",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Thura Phyo",
+                        Email = "thuraphyo@gmail.com"
+                    }
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +73,15 @@ namespace ATMS.Web.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.)
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ATM API V1");
+            });
 
             app.UseEndpoints(endpoints =>
             {

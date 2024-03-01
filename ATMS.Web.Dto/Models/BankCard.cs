@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace ATMS.Web.API.Models
+namespace ATMS.Web.Dto.Models
 {
     public class BankCard
     {

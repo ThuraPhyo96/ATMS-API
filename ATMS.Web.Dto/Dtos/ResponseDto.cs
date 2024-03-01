@@ -1,4 +1,4 @@
-﻿namespace ATMS.Web.API.AppServices.Dtos
+﻿namespace ATMS.Web.Dto.Dtos
 {
     public class ResponseDto
     {

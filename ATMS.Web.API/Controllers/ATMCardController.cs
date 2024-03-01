@@ -1,10 +1,10 @@
 ﻿using ATMS.Web.API.AppServices;
-using ATMS.Web.API.AppServices.Dtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ATMS.Web.Dto.Dtos;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

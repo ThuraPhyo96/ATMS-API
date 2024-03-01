@@ -1,7 +1,7 @@
-﻿using ATMS.Web.API.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
+using ATMS.Web.Dto.Models;
 
 namespace ATMS.Web.API.Data
 {

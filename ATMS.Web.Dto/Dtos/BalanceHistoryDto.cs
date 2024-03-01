@@ -1,10 +1,10 @@
-﻿using ATMS.Web.API.Models;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using ATMS.Web.Dto.Models;
 
-namespace ATMS.Web.API.AppServices.Dtos
+namespace ATMS.Web.Dto.Dtos
 {
     public class BalanceHistoryDto
     {

@@ -1,4 +1,4 @@
-﻿namespace ATMS.Web.API.Models
+﻿namespace ATMS.Web.Dto.Models
 {
     public static class MaxLength
     {

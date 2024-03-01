@@ -1,9 +1,7 @@
-﻿using ATMS.Web.API.Models;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System;
 
-namespace ATMS.Web.API.AppServices.Dtos
+namespace ATMS.Web.Dto.Dtos
 {
     public class BankAccountDto : ResponseDto
     {

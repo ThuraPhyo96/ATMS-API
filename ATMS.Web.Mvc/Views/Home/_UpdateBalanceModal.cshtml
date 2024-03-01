@@ -1,5 +1,4 @@
-﻿@using ATMS.Web.API.Models
-@model ATMS.Web.API.AppServices.Dtos.BankAccountDto
+﻿@model BankAccountDto
 @{
     Layout = null;
     string label = Model.ActionType == (int)EBalanceHistoryType.Withdraw ? "Withdraw" : "Deposit";

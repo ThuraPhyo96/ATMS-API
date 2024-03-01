@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ATMS.Web.API\ATMS.Web.API.csproj" />
+    <ProjectReference Include="..\ATMS.Web.Dto\ATMS.Web.Dto.csproj" />
   </ItemGroup>
 
 </Project>

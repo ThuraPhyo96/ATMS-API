@@ -1,5 +1,5 @@
-﻿using ATMS.Web.API.AppServices.Dtos;
-using ATMS.Web.API.Models;
+﻿using ATMS.Web.Dto.Dtos;
+using ATMS.Web.Dto.Models;
 using AutoMapper;
 
 namespace ATMS.Web.API.Mapping

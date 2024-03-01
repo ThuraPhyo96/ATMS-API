@@ -1,9 +1,6 @@
-using ATMS.Web.API.AppServices;
-using ATMS.Web.API.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,11 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ATMS.Web.API;
 using AutoMapper;
 using System.Reflection;
-using ATMS.Web.API.Mapping;
-using Microsoft.OpenApi.Models;
 
 namespace ATMS.Web.Mvc
 {
@@ -34,36 +28,36 @@ namespace ATMS.Web.Mvc
             // Register Http Client to request/response 
             services.AddHttpClient();
             // Register to use DB context
-            services.AddDbContext<ATMContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<ATMContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllersWithViews();
 
-            // Create auto mapper configuration
-            var mapperConfiguration = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new MappingProfile());
-            });
-            var mapper = mapperConfiguration.CreateMapper();
-            // Register auto mapper to services throught lifetime use
-            services.AddSingleton(mapper);
+            //// Create auto mapper configuration
+            //var mapperConfiguration = new MapperConfiguration(cfg =>
+            //{
+            //    cfg.AddProfile(new MappingProfile());
+            //});
+            //var mapper = mapperConfiguration.CreateMapper();
+            //// Register auto mapper to services throught lifetime use
+            //services.AddSingleton(mapper);
 
-            // Register sevices
-            services.AddScoped<IATMCardAppService, ATMCardAppService>();
+            //// Register sevices
+            //services.AddScoped<IATMCardAppService, ATMCardAppService>();
 
-            // Register the Swagger generator, defining 1 or more Swagger documents
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "ATM Card API",
-                    Version = "v1",
-                    Description = "To Test ATM Card API",
-                    Contact = new OpenApiContact
-                    {
-                        Name = "Thura Phyo",
-                        Email = "thuraphyo@gmail.com"
-                    }
-                });
-            });
+            //// Register the Swagger generator, defining 1 or more Swagger documents
+            //services.AddSwaggerGen(c =>
+            //{
+            //    c.SwaggerDoc("v1", new OpenApiInfo
+            //    {
+            //        Title = "ATM Card API",
+            //        Version = "v1",
+            //        Description = "To Test ATM Card API",
+            //        Contact = new OpenApiContact
+            //        {
+            //            Name = "Thura Phyo",
+            //            Email = "thuraphyo@gmail.com"
+            //        }
+            //    });
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,14 +78,14 @@ namespace ATMS.Web.Mvc
 
             app.UseRouting();
 
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
+            //// Enable middleware to serve generated Swagger as a JSON endpoint.
+            //app.UseSwagger();
 
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.)
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ATM API V1");
-            });
+            //// Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.)
+            //app.UseSwaggerUI(c =>
+            //{
+            //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ATM API V1");
+            //});
 
             app.UseEndpoints(endpoints =>
             {

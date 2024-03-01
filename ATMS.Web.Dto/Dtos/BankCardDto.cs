@@ -1,9 +1,8 @@
-﻿using ATMS.Web.API.Models;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading;
+using ATMS.Web.Dto.Models;
 
-namespace ATMS.Web.API.AppServices.Dtos
+namespace ATMS.Web.Dto.Dtos
 {
     public class BankCardDto : ResponseDto
     {
@@ -23,7 +22,7 @@ namespace ATMS.Web.API.AppServices.Dtos
 
         public BankCardDto()
         {
-                
+
         }
 
         public BankCardDto(int statusCode, string message)

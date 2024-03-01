@@ -1,5 +1,5 @@
-﻿using ATMS.Web.API.AppServices.Dtos;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using ATMS.Web.Dto.Dtos;
 
 namespace ATMS.Web.API.AppServices
 {

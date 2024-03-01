@@ -1,4 +1,4 @@
-﻿namespace ATMS.Web.API.Helpers
+﻿namespace ATMS.Web.Dto.Helpers
 {
     public static class StatusMessage
     {

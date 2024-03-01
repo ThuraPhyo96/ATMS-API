@@ -1,8 +1,8 @@
-﻿using ATMS.Web.API.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
+using ATMS.Web.Dto.Models;
 
 namespace ATMS.Web.API.Data
 {
