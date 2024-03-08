@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ATMS.Web.Dto.Models;
+using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ATMS.Web.Dto.Dtos
@@ -41,5 +43,15 @@ namespace ATMS.Web.Dto.Dtos
         public string PIN { get; set; }
         public int ActionType { get; set; }
         public decimal Amount { get; set; }
+    }
+
+    public class BankAccountSingleDto
+    {
+        public int BankAccountId { get; set; }
+
+        public int CustomerId { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Balance { get; set; }
     }
 }
