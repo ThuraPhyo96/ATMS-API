@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +27,82 @@ namespace ATMS.ConsoleApp.AdoDotNetExamples
         {
             // Create connection string
             _connection = new(builder.ConnectionString);
+        }
+
+        public void Run()
+        {
+            BankCardDto bankCard = CardLogin();
+
+            if (bankCard.BankCardId == 0)
+                Console.WriteLine("Invalid card.");
+            else
+            {
+                Console.WriteLine("Your card is valid till to " + bankCard.ValidDate.ToString("dd-MMM-yyyy"));
+
+                // Ask the user to choose an option.
+                Console.WriteLine("Choose an option from the following list:");
+                Console.WriteLine("\tw - Withdraw");
+                Console.WriteLine("\td - Deposit");
+                Console.WriteLine("\th - View History");
+                Console.Write("Your option? ");
+
+                // Use a switch statement to do the math.
+                switch (Console.ReadLine())
+                {
+                    case "w":
+                        {
+                            BankAccountDto bankAccount = UpdateBalance(bankCard.BankCardNumber, bankCard.PIN, "w");
+                            if (bankAccount.StatusCode == 200)
+                            {
+                                Console.WriteLine($"Your available balance: " + bankAccount.AvailableBalance);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Message: " + bankAccount.StatusMessage);
+                            }
+                        }
+                        break;
+                    case "d":
+                        {
+                            BankAccountDto bankAccount = UpdateBalance(bankCard.BankCardNumber, bankCard.PIN, "d");
+                            if (bankAccount.StatusCode == 200)
+                            {
+                                Console.WriteLine($"Your available balance: " + bankAccount.AvailableBalance);
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Message: " + bankAccount.StatusMessage);
+                            }
+                        }
+                        break;
+                    case "h":
+                        {
+                            List<BalanceHistoryDto> balanceHistories = GetHistoryByCard(bankCard.BankCardNumber, bankCard.PIN);
+                            if (balanceHistories.Any())
+                            {
+                                foreach (BalanceHistoryDto history in balanceHistories)
+                                {
+                                    string historyType = string.Empty;
+                                    if (history.HistoryType == (int)EBalanceHistoryType.Withdraw)
+                                    {
+                                        historyType = "Withdraw";
+                                    }
+                                    else if (history.HistoryType == (int)EBalanceHistoryType.Deposite)
+                                    {
+                                        historyType = "Deposite";
+                                    }
+                                    Console.WriteLine($"{historyType} {history.Amount} at {history.TransactionDate: dd-MMM-yyyy}");
+                                }
+                            }
+                            else
+                                Console.WriteLine($"No history found.");
+                        }
+                        break;
+                }
+                // Wait for the user to respond before closing.
+                Console.Write("Press any key to close the console app...");
+                Console.ReadKey();
+            }
         }
 
         public BankCardDto CardLogin()
