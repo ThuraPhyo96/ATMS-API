@@ -28,12 +28,10 @@ namespace ATMS.Web.Dto.Models
                 
         }
 
-        public Township(int regionId, Region region, int divisionId, Division division, string name, string description, int sort)
+        public Township(int regionId, int divisionId, string name, string description, int sort)
         {
             RegionId = regionId;
-            Region = region;
             DivisionId = divisionId;
-            Division = division;
             Name = name;
             Description = description;
             Sort = sort;

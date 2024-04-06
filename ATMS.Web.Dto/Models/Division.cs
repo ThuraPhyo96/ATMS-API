@@ -28,10 +28,9 @@ namespace ATMS.Web.Dto.Models
                 
         }
 
-        public Division(int regionId, Region region, string name, string description, int sort)
+        public Division(int regionId, string name, string description, int sort)
         {
             RegionId = regionId;
-            Region = region;
             Name = name;
             Description = description;
             Sort = sort;
