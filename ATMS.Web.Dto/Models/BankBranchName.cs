@@ -36,6 +36,27 @@ namespace ATMS.Web.Dto.Models
         public TimeSpan ClosedHour { get; set; }
 
         public int Status { get; set; }
+
+        public BankBranchName()
+        {
+                
+        }
+
+        public BankBranchName(int bankNameId, string name, string code, string telephoneNumber, string address, int regionId,
+               int divisionId, int townshipId, TimeSpan openingHour, TimeSpan closedHour, int status)
+        {
+            BankNameId = bankNameId;
+            Name = name;
+            Code = code;
+            TelephoneNumber = telephoneNumber;
+            Address = address;
+            RegionId = regionId;
+            DivisionId = divisionId;
+            TownshipId = townshipId;
+            OpeningHour = openingHour;
+            ClosedHour = closedHour;
+            Status = status;
+        }
     }
 
     public enum EBankBranchStatus

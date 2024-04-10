@@ -15,6 +15,10 @@ namespace ATMS.Web.ATMLocationAPI.Data
             await CreateRegion(context);
             await CreateDivision(context);
             await CreateTownship(context);
+
+            await CreateBank(context);
+            await CreateBankBranches(context);
+            await CreateATMLocations(context);
         }
 
         private static async Task CreateRegion(ATMLocationContext context)
@@ -299,6 +303,82 @@ namespace ATMS.Web.ATMLocationAPI.Data
             await context.Townships.AddRangeAsync(bgoTownships);
             await context.Townships.AddRangeAsync(ygnTownships);
 
+            await context.SaveChangesAsync();
+        }
+
+        private static async Task CreateBank(ATMLocationContext context)
+        {
+            List<BankName> bankNames =
+            [
+                new("SME-Development Bank", "SME", "09-441 202 217", "saleandmarketing@smedbank.com", "No. 298, Corner of Anawrahtar Road & Wardan Street, No. 2 Quarter, Lanmadaw Township. Yangon, Myanmar", true),
+                new("Asia Green Development Bank", "AGD", "(95-1) 239 9333", "contact@agdbank.com", "No.590, Between 7th and Kine Tan Streest, Strand Street Lanmadaw Township. Yangon, Myanmar", true),
+                new("Ayeyarwady Bank", "AYA", "(95-1) 231 7777", "info@ayabank.com", "No. 416, Mahabandoola Road, Kyauktada Township, Yangon, Myanmar.", true),
+                new("Co-operative Bank (CB Bank)", "CB", "(95-1) 231 7770", "contact@cbbank.com.mm", "No. (46), Union Financial Center (Tower A & B),Corner of Mahar Bandoola Road & Thein Phyu Road,Botahtaung Township, Yangon, 11161 Myanmar", true),
+                new("Kanbawza Bank", "KBZ", "(95-1)  018 555", "customer_service@kbzbank.com", "No.(615/1), Pyay Road, Kamayut Township, Yangon City, Myanmar.", true),
+                new("UAD Bank", "UAB", "95 1470 7000", "info@uab.com.mm", "uab Tower @ Times City, Kyun Taw Road, Kamayut Township, Yangon 11041, Myanmar", true),
+                new("Yoma Bank", "YOMA", "(95) 097 9662 9662", "info@yomabank.com ", "No. 14, Kyaik Khauk Pagoda Road, Star City, Thanlyin Township, Yangon 11291, Myanmar", true),
+            ];
+
+            await context.BankNames.AddRangeAsync(bankNames);
+            await context.SaveChangesAsync();
+        }
+
+        private static async Task CreateBankBranches(ATMLocationContext context)
+        {
+            var bankObjs = await context.BankNames.ToListAsync();
+            var regionObjs = await context.Regions
+                .Include(x => x.Divisions).ThenInclude(x => x.Townships)
+                .ToListAsync();
+
+            BankName kbzBank = bankObjs.FirstOrDefault(x => x.Code == "KBZ")!;
+            Region bgoRegion = regionObjs.FirstOrDefault(x => x.Name == "Bago Region")!;
+            int bgoDivisionId = bgoRegion.Divisions.FirstOrDefault(x => x.Name == "Bago")!.DivisionId;
+            int bgoTownshipId = bgoRegion.Divisions.FirstOrDefault(x => x.Name == "Bago")!.Townships.FirstOrDefault(x => x.Name == "Bago")!.TownshipId;
+            int hpayargyiTownshipId = bgoRegion.Divisions.FirstOrDefault(x => x.Name == "Bago")!.Townships.FirstOrDefault(x => x.Name == "Hpayargyi")!.TownshipId;
+            int intagawTownshipId = bgoRegion.Divisions.FirstOrDefault(x => x.Name == "Bago")!.Townships.FirstOrDefault(x => x.Name == "Intagaw")!.TownshipId;
+
+            List<BankBranchName> kbzBgoBankBranchNames =
+            [
+                // KBZ Bago
+                new(kbzBank!.BankNameId, "BAGO-1", "BGO-1", "052-2221483, 2221431", "No.237/238, ShweMawDaw Pagoda Rd, YoneGyi Qtr, Bago.", bgoRegion.RegionId, bgoDivisionId, bgoTownshipId, new TimeSpan(9, 0, 0), new TimeSpan(15, 30, 0), (int)EBankBranchStatus.Open),
+                new(kbzBank!.BankNameId, "BAGO-2", "BGO-2", "052-2201054~55", "No.354, ThaNutPin St, ShinSawPu Qtr, East BGO.", bgoRegion.RegionId, bgoDivisionId, bgoTownshipId, new TimeSpan(9, 0, 0), new TimeSpan(15, 30, 0), (int)EBankBranchStatus.Open),
+                new(kbzBank!.BankNameId, "BAGO-4 (MIN LANE)", "BGO-4", "052-2201086, 2201087", "No.(130),Ground Flr, Min Rd,Zay Paingg Qtr, Bago.", bgoRegion.RegionId, bgoDivisionId, bgoTownshipId, new TimeSpan(9, 0, 0), new TimeSpan(15, 30, 0), (int)EBankBranchStatus.Open),
+                new(kbzBank!.BankNameId, "BAGO-5 NYAUNG WYNE", "BGO-5", "052-2221781, 2221602", "Build -5, Rm(1+2), Nyaung Wine-18 St, ZayPai Qtr, BGO.", bgoRegion.RegionId, bgoDivisionId, bgoTownshipId, new TimeSpan(9, 0, 0), new TimeSpan(15, 30, 0), (int)EBankBranchStatus.Open),
+                new(kbzBank!.BankNameId, "BAGO-6 ICON SHOPPING CENTRE", "BGO-6", "052-2201358~59, 2201361~63", "Sein Hinn Shopping Centre, YGN-MDY Rd, Bago", bgoRegion.RegionId, bgoDivisionId, bgoTownshipId, new TimeSpan(9, 0, 0), new TimeSpan(15, 30, 0), (int)EBankBranchStatus.Open),
+                new(kbzBank!.BankNameId, "BAGO-HPAYAR GYI", "BGO-P-GYI", "052-65550, 65551, 65552, 65553", "No.33, Ygn-MLM Rd, Main Rd, Thamankone West, Bago Pagoda Gyi Tsp, Bago.", bgoRegion.RegionId, bgoDivisionId, hpayargyiTownshipId, new TimeSpan(9, 0, 0), new TimeSpan(15, 30, 0), (int)EBankBranchStatus.Open),
+                new(kbzBank!.BankNameId, "BAGO-INN TA KAW", "BGO-ITK", "09-459735610, 09-761007391, 09-761007392", "No(7/32), Ygn-Mdy Rd, Big Qtr (3), InnTaKaw Town, Bago", bgoRegion.RegionId, bgoDivisionId, intagawTownshipId, new TimeSpan(9, 0, 0), new TimeSpan(15, 30, 0), (int)EBankBranchStatus.Open)
+            ];
+
+            await context.BankBranchNames.AddRangeAsync(kbzBgoBankBranchNames);
+            await context.SaveChangesAsync();
+        }
+
+        private static async Task CreateATMLocations(ATMLocationContext context)
+        {
+            var bankObjs = await context.BankNames
+                .Include(x => x.BankBranchNames)
+                .ToListAsync();
+
+            var regionObjs = await context.Regions
+                .Include(x => x.Divisions).ThenInclude(x => x.Townships)
+                .ToListAsync();
+
+            BankName kbzBank = bankObjs.FirstOrDefault(x => x.Code == "KBZ")!;
+            BankBranchName kbzBGO1 = kbzBank.BankBranchNames.FirstOrDefault(x => x.Code == "BGO-1")!;
+            BankBranchName kbzBGO2 = kbzBank.BankBranchNames.FirstOrDefault(x => x.Code == "BGO-2")!;
+
+            Region bgoRegion = regionObjs.FirstOrDefault(x => x.Name == "Bago Region")!;
+            int bgoDivisionId = bgoRegion.Divisions.FirstOrDefault(x => x.Name == "Bago")!.DivisionId;
+            int bgoTownshipId = bgoRegion.Divisions.FirstOrDefault(x => x.Name == "Bago")!.Townships.FirstOrDefault(x => x.Name == "Bago")!.TownshipId;
+
+            List<ATMLocation> kbzBgoBankATMLocations =
+            [
+               // KBZ Bago ATM
+               new(kbzBank!.BankNameId, kbzBGO1.BankBranchNameId, bgoRegion.RegionId, bgoDivisionId, bgoTownshipId, "No(237/238), Shwemawdaw Pagoda Street, Yone Gyi Quarter, Bago District, Bago Region(East).", (int)EATMStatus.Available),
+                new(kbzBank!.BankNameId, kbzBGO2.BankBranchNameId, bgoRegion.RegionId, bgoDivisionId, bgoTownshipId, "No(354), Thanatpin Street, Shin Saw Pu Quarter, Bago District, Bago Region.", (int)EATMStatus.Available)
+            ];
+
+            await context.ATMLocations.AddRangeAsync(kbzBgoBankATMLocations);
             await context.SaveChangesAsync();
         }
     }

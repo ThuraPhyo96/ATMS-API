@@ -25,5 +25,22 @@ namespace ATMS.Web.Dto.Models
         public string Address { get; set; }
 
         public bool IsActive { get; set; }
+
+        public List<BankBranchName> BankBranchNames { get; set; }
+
+        public BankName()
+        {
+                
+        }
+
+        public BankName(string name, string code, string telephoneNumber, string email, string address, bool isActive)
+        {
+            Name = name;
+            Code = code;
+            TelephoneNumber = telephoneNumber;
+            Email = email;
+            Address = address;
+            IsActive = isActive;
+        }
     }
 }

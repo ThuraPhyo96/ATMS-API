@@ -34,12 +34,15 @@ namespace ATMS.Web.Dto.Models
 
         }
 
-        public ATMLocation(int regionId, int divisionId, int townshipId, string address)
+        public ATMLocation(int bankNameId, int? bankBranchNameId, int regionId, int divisionId, int townshipId, string address, int status)
         {
+            BankNameId = bankNameId;
+            BankBranchNameId = bankBranchNameId;
             RegionId = regionId;
             DivisionId = divisionId;
             TownshipId = townshipId;
             Address = address;
+            Status = status;
         }
     }
 
