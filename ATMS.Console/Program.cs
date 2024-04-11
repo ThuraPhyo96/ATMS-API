@@ -3,6 +3,7 @@ using ATMS.ConsoleApp.AdoDotNetExamples;
 using ATMS.ConsoleApp.DapperExamples;
 using ATMS.ConsoleApp.EFCoreExamples;
 using ATMS.ConsoleApp.HttpClientExamples;
+using ATMS.ConsoleApp.RestClienetExamples;
 
 
 //AdoDotNetExample adoDotNetExample = new();
@@ -19,7 +20,10 @@ Console.WriteLine("Waiting the API.....");
 Console.ReadKey();
 
 
-HttpClientExample httpClientExample = new();
-await httpClientExample.Run();
+//HttpClientExample httpClientExample = new();
+//await httpClientExample.Run();
+
+RestClientExample restClientExample = new();
+await restClientExample.Run();
 
 Console.ReadKey();
