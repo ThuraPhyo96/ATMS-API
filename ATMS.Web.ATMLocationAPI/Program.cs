@@ -1,5 +1,7 @@
 using ATMS.Web.ATMLocationAPI.Data;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using ATMS.Web.ATMLocationAPI.AppServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,18 @@ builder.Services.AddDbContext<ATMLocationContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+// Create auto mapper configuration
+var mapperConfiguration = new MapperConfiguration(cfg =>
+{
+    cfg.AddProfile(new ATMS.Web.ATMLocationAPI.Mapping.MappingProfile());
+});
+var mapper = mapperConfiguration.CreateMapper();
+// Register auto mapper to services throught lifetime use
+builder.Services.AddSingleton(mapper);
+
+// Register sevices
+builder.Services.AddScoped<IATMLocationAppService, ATMLocationAppService>();
 
 var app = builder.Build();
 

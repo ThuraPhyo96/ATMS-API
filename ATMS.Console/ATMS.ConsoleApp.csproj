@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ATM.Web.ViewModels\ATM.Web.ViewModels.csproj" />
     <ProjectReference Include="..\ATMS.Web.Dto\ATMS.Web.Dto.csproj" />
   </ItemGroup>
 

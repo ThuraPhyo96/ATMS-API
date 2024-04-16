@@ -1,12 +1,14 @@
-﻿using System;
+﻿using ATMS.Web.Dto.Helpers;
+using ATMS.Web.Dto;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using ATMS.Web.Dto.Models;
 
-namespace ATMS.Web.Dto.Models
+namespace ATMS.Web.Dto.Dtos
 {
-    public class ATMLocation
+    public class ATMLocationDto : ResponseDto
     {
         public int ATMLocationId { get; set; }
 
@@ -29,29 +31,10 @@ namespace ATMS.Web.Dto.Models
         public string Address { get; set; }
 
         public int Status { get; set; }
-
-        public ATMLocation()
-        {
-
-        }
-
-        public ATMLocation(int bankNameId, int? bankBranchNameId, int regionId, int divisionId, int townshipId, string address, int status)
-        {
-            BankNameId = bankNameId;
-            BankBranchNameId = bankBranchNameId;
-            RegionId = regionId;
-            DivisionId = divisionId;
-            TownshipId = townshipId;
-            Address = address;
-            Status = status;
-        }
     }
 
-    public enum EATMStatus
+    public class ATMLocationListDto : ResponseDto
     {
-        [Description("Available")]
-        Available = 1,
-        [Description("TemporaryCloesd")]
-        TemporaryCloesd = 2
+        public List<ATMLocationDto> Data { get; set; } = new List<ATMLocationDto> ();
     }
 }

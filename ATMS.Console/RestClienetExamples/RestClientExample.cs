@@ -1,4 +1,5 @@
-﻿using ATMS.Web.Dto.Dtos;
+﻿using ATM.Web.ViewModels;
+using ATMS.Web.Dto.Dtos;
 using ATMS.Web.Dto.Models;
 using Newtonsoft.Json;
 using RestSharp;
@@ -50,6 +51,7 @@ namespace ATMS.ConsoleApp.RestClienetExamples
             Console.WriteLine("\tw - Withdraw");
             Console.WriteLine("\td - Deposit");
             Console.WriteLine("\th - View History");
+            Console.WriteLine("\tl - View ATM Location");
             Console.Write("Your option? ");
 
             // Use a switch statement to do the math.
@@ -102,6 +104,22 @@ namespace ATMS.ConsoleApp.RestClienetExamples
                         }
                         else
                             Console.WriteLine($"No history found.");
+                    }
+                    break;
+                case "l":
+                    {
+                        Console.WriteLine("Enter bank name:");
+                        string? bankName = Console.ReadLine();
+                        List<ATMLocationViewModel> aTMLocations = await GetATMLocationByBankName(bankName!);
+                        if (aTMLocations.Any())
+                        {
+                            foreach (ATMLocationViewModel aTMLocation in aTMLocations)
+                            {
+                                Console.WriteLine($"{aTMLocation.BankName}|{aTMLocation?.BankBranchName}|{aTMLocation?.RegionName}|{aTMLocation?.DivisionName}|{aTMLocation?.TownshipName}|{aTMLocation?.Address}|{aTMLocation?.Status}");
+                            }
+                        }
+                        else
+                            Console.WriteLine($"No ATM found.");
                     }
                     break;
             }
@@ -214,6 +232,32 @@ namespace ATMS.ConsoleApp.RestClienetExamples
                 Console.WriteLine($"Error calling API: {ex.Message}");
             }
             return new BalanceHistoryByCardNumberDto();
+        }
+
+        public async Task<List<ATMLocationViewModel>> GetATMLocationByBankName(string bankName)
+        {
+            try
+            {
+                RestRequest request = new($"{_baseUrl}/atmcard/{bankName}", Method.Get);
+                RestClient client = new();
+                RestResponse response = await client.ExecuteAsync(request);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    List<ATMLocationViewModel> locations = JsonConvert.DeserializeObject<List<ATMLocationViewModel>>(response.Content!)!;
+                    if (locations.Any())
+                        return locations;
+                    else
+                        return new List<ATMLocationViewModel>();
+                }
+                else
+                    return new List<ATMLocationViewModel>();
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Error calling API: {ex.Message}");
+            }
+            return new List<ATMLocationViewModel>();
         }
     }
 }
