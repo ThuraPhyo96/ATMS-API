@@ -3,6 +3,7 @@ using ATMS.ConsoleApp.AdoDotNetExamples;
 using ATMS.ConsoleApp.DapperExamples;
 using ATMS.ConsoleApp.EFCoreExamples;
 using ATMS.ConsoleApp.HttpClientExamples;
+using ATMS.ConsoleApp.RefitExamples;
 using ATMS.ConsoleApp.RestClienetExamples;
 
 
@@ -23,7 +24,10 @@ Console.ReadKey();
 //HttpClientExample httpClientExample = new();
 //await httpClientExample.Run();
 
-RestClientExample restClientExample = new();
-await restClientExample.Run();
+//RestClientExample restClientExample = new();
+//await restClientExample.Run();
+
+RefitExample refitExample = new();
+await refitExample.Run();
 
 Console.ReadKey();
