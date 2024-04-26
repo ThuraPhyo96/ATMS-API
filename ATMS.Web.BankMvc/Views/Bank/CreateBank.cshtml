@@ -1,0 +1,29 @@
+﻿@model CreateBankViewModel
+
+<form asp-controller="Bank" asp-action="Save" method="post">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label asp-for="Code" class="form-label"></label>
+        <input asp-for="Code" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label asp-for="TelephoneNumber" class="form-label"></label>
+        <input asp-for="TelephoneNumber" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control">
+    </div>
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label"></label>
+        <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="mb-3 form-check">
+        <input asp-for="IsActive" class="form-check-input">
+        <label class="form-check-label" asp-for="IsActive"></label>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

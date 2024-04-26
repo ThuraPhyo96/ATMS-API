@@ -1,0 +1,41 @@
+﻿@model List<BankViewModel>
+
+@if (TempData["Message"] is not null)
+{
+    @await Html.PartialAsync("_ShowMessageModal", TempData["Message"])
+}
+
+<a asp-controller="Bank" asp-action="Create" class="btn btn-primary">New</a>
+
+<table id="bankGrid" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Telephone Number</th>
+            <th>Email Address</th>
+            <th> Address</th>
+            <th>Enable?</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Code</td>
+                <td>@item.Name</td>
+                <td>@item.TelephoneNumber</td>
+                <td>@item.Email</td>
+                <td>@item.Address</td>
+                <td><input type="checkbox" class="form-check-input" @(item.IsActive ? "checked" : "") /></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        let table = new DataTable('#bankGrid');
+    </script>
+}
