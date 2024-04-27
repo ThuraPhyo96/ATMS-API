@@ -67,6 +67,16 @@ namespace ATM.Web.ViewModels
         public bool IsActive { get; set; }
     }
 
+    public class UpdateBankViewModel
+    {
+        public string Name { get; set; }
+        public string Code { get; set; }
+        public string TelephoneNumber { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
+        public bool IsActive { get; set; }
+    }
+
     public class ResponseModel
     {
         public bool IsSuccess { get; set; }

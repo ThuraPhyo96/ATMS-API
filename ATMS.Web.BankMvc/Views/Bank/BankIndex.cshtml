@@ -10,6 +10,7 @@
 <table id="bankGrid" class="display" style="width:100%">
     <thead>
         <tr>
+            <th></th>
             <th>Code</th>
             <th>Name</th>
             <th>Telephone Number</th>
@@ -22,6 +23,10 @@
         @foreach (var item in Model)
         {
             <tr>
+                <th>
+                    <a asp-controller="Bank" asp-action="Edit" asp-route-id="@item.BankNameId" class="btn btn-secondary">Edit</a>
+                    <a asp-controller="Bank" asp-action="Delete" asp-route-id="@item.BankNameId" class="btn btn-danger">Edit</a>
+                </th>
                 <td>@item.Code</td>
                 <td>@item.Name</td>
                 <td>@item.TelephoneNumber</td>
