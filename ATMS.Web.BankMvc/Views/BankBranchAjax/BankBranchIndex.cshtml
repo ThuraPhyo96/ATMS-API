@@ -1,0 +1,44 @@
+﻿@model List<BankBranchViewModel>
+
+@if (TempData["Message"] is not null)
+{
+    @await Html.PartialAsync("_ShowMessageModal", TempData["Message"])
+}
+
+<a asp-controller="BankBranchAjax" asp-action="Create" class="btn btn-primary">New</a>
+
+<table id="bankBranchGrid" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Telephone Number</th>
+            <th>Address</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th>
+                    @* <a asp-controller="BankBranch" asp-action="Edit" asp-route-id="@item.BankNameId" class="btn btn-secondary">Edit</a>
+                    <a asp-controller="BankBranch" asp-action="Delete" asp-route-id="@item.BankNameId" class="btn btn-danger">Edit</a> *@
+                </th>
+                <td>@item.Code</td>
+                <td>@item.Name</td>
+                <td>@item.TelephoneNumber</td>
+                <td>@item.Address</td>
+                <td>@item.StatusDescription</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        let table = new DataTable('#bankBranchGrid');
+    </script>
+}

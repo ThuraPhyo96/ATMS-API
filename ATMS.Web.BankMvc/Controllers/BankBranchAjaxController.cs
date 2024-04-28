@@ -1,0 +1,173 @@
+﻿using ATM.Web.Helpers;
+using ATM.Web.ViewModels;
+using ATMS.Web.BankMvc.Data;
+using ATMS.Web.Dto.Models;
+using Azure;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System;
+using System.Net.Mime;
+using System.Text.Json;
+
+namespace ATMS.Web.BankMvc.Controllers
+{
+    public class BankBranchAjaxController : Controller
+    {
+        private readonly ApplicationDBContext _dBContext;
+        private readonly JsonSerializerOptions _jsonOption;
+
+        public BankBranchAjaxController()
+        {
+            _dBContext = new ApplicationDBContext();
+
+            // Configure serialization options
+            _jsonOption = new()
+            {
+                PropertyNamingPolicy = null // Disable any naming policy
+            };
+        }
+
+        [ActionName("Index")]
+        public async Task<IActionResult> BankBranchIndex()
+        {
+            var query = _dBContext.BankBranchNames
+                .Include(x => x.BankName)
+                .Include(x => x.Region)
+                .Include(x => x.Division)
+                .Include(x => x.Township)
+               .AsNoTracking();
+            var records = await query.Select(x => ChangeBankBranchViewModel(x)).ToListAsync();
+            return View("BankBranchIndex", records);
+        }
+
+        [HttpGet]
+        [ActionName("Create")]
+        public async Task<IActionResult> CreateBankBranch()
+        {
+            CreateBankBranchViewModel model = new()
+            {
+                BankNames = await BankNameSelectItems(),
+                RegionNames = await RegionSelectItems(),
+                StatusNames = BankStatusSelectItems(),
+                OpeningHour = new TimeSpan(9, 30, 0),
+                ClosedHour = new TimeSpan(15, 30, 0)
+            };
+            return View("CreateBankBranch", model);
+        }
+
+        [HttpPost]
+        [ActionName("Save")]
+        public async Task<IActionResult> SaveBankBranch(CreateBankBranchViewModel model)
+        {
+            var obj = ChangeBankBranchNameModel(model);
+            _dBContext.BankBranchNames.Add(obj);
+            int effectRow = await _dBContext.SaveChangesAsync();
+
+            ResponseModel response = new()
+            {
+                IsSuccess = effectRow > 0,
+                Message = effectRow > 0 ? "Bank branch has been successfully created" : "Error: Creation bank failed!"
+            };
+
+            // Serialize your data using the specified options
+            var data = System.Text.Json.JsonSerializer.Serialize(response, _jsonOption);
+
+            return Content(data, MediaTypeNames.Application.Json);
+        }
+
+        #region Select Items
+        private async Task<List<SelectListItem>> BankNameSelectItems()
+        {
+            var query = _dBContext.BankNames.AsNoTracking();
+            return await query.Select(x => new SelectListItem() { Value = x.BankNameId.ToString(), Text = x.Name }).ToListAsync();
+        }
+
+        private async Task<List<SelectListItem>> RegionSelectItems()
+        {
+            var query = _dBContext.Regions.AsNoTracking();
+            return await query.Select(x => new SelectListItem() { Value = x.RegionId.ToString(), Text = x.Name }).ToListAsync();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DivisionSelectItemsByRegionId(int regionId)
+        {
+            var query = _dBContext.Divisions.AsNoTracking();
+            List<SelectListItem> divisons = await query.Where(x=> x.RegionId.Equals(regionId)).Select(x => new SelectListItem() { Value = x.DivisionId.ToString(), Text = x.Name }).ToListAsync();
+
+            var data = System.Text.Json.JsonSerializer.Serialize(divisons, _jsonOption);
+            return Content(data, MediaTypeNames.Application.Json);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TownshipSelectItemsByDivisionId(int divisionId)
+        {
+            var query = _dBContext.Townships.AsNoTracking();
+            List<SelectListItem> townships = await query.Where(x=> x.DivisionId.Equals(divisionId)).Select(x => new SelectListItem() { Value = x.DivisionId.ToString(), Text = x.Name }).ToListAsync();
+
+            var data = System.Text.Json.JsonSerializer.Serialize(townships, _jsonOption);
+            return Content(data, MediaTypeNames.Application.Json);
+        }
+
+        private List<SelectListItem> BankStatusSelectItems()
+        {
+            return
+            [
+                new()
+                {
+                    Value = ((int)EBankBranchStatus.Open).ToString(),
+                    Text = Helper.GetEnumDescriptionByValue<EBankBranchStatus>((int)EBankBranchStatus.Open)
+                },
+                new()
+                {
+                    Value = ((int)EBankBranchStatus.TemporaryClosed).ToString(),
+                    Text = Helper.GetEnumDescriptionByValue<EBankBranchStatus>((int)EBankBranchStatus.TemporaryClosed)
+                }
+            ];
+        }
+        #endregion
+
+        #region Change
+        private static BankBranchName ChangeBankBranchNameModel(CreateBankBranchViewModel model)
+        {
+            return new BankBranchName()
+            {
+                Name = model.Name,
+                Code = model.Code,
+                TelephoneNumber = model.TelephoneNumber,
+                Address = model.Address,
+                BankNameId = model.BankNameId,
+                RegionId = model.RegionId,
+                DivisionId = model.DivisionId,
+                TownshipId = model.TownshipId,
+                OpeningHour = model.OpeningHour,
+                ClosedHour = model.ClosedHour,
+                Status = model.Status
+            };
+        }
+
+        private static BankBranchViewModel ChangeBankBranchViewModel(BankBranchName model)
+        {
+            return new BankBranchViewModel
+            {
+                BankBranchNameId = model.BankBranchNameId,
+                Name = model.Name,
+                Code = model.Code,
+                TelephoneNumber = model.TelephoneNumber,
+                Address = model.Address,
+                RegionId = model.RegionId,
+                RegionName = model.Region.Name,
+                DivisionId = model.DivisionId,
+                DivisionName = model.Division.Name,
+                TownshipId = model.TownshipId,
+                TownshipName = model.Township.Name,
+                OpeningHour = model.OpeningHour,
+                ClosedHour = model.ClosedHour,
+                StatusDescription = Helper.GetEnumDescriptionByValue<EBankBranchStatus>(model.Status)
+            };
+        }
+        #endregion
+
+    }
+}

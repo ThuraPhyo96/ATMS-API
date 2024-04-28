@@ -8,4 +8,8 @@
     <ProjectReference Include="..\ATMS.Web.Dto\ATMS.Web.Dto.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
 </Project>
