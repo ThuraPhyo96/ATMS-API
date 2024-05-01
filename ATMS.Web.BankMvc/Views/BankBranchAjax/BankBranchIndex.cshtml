@@ -23,8 +23,8 @@
         {
             <tr>
                 <th>
-                    @* <a asp-controller="BankBranch" asp-action="Edit" asp-route-id="@item.BankNameId" class="btn btn-secondary">Edit</a>
-                    <a asp-controller="BankBranch" asp-action="Delete" asp-route-id="@item.BankNameId" class="btn btn-danger">Edit</a> *@
+                    <a asp-controller="BankBranchAjax" asp-action="Edit" asp-route-id="@item.BankBranchNameId" class="btn btn-secondary">Edit</a>
+                    @* <a asp-controller="BankBranch" asp-action="Delete" asp-route-id="@item.BankNameId" class="btn btn-danger">Edit</a> *@
                 </th>
                 <td>@item.Code</td>
                 <td>@item.Name</td>

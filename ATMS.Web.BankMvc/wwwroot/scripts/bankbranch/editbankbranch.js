@@ -19,8 +19,13 @@ $('#RegionId').on('select2:select', function (event) {
         data: { regionId: selectedRegionId },
         dataType: 'json',
         success: function (data) {
+            $("#DivisionId").prop("disabled", false);
+            $('#DivisionId option').remove();
+            var divisionDDL = $('#DivisionId');
+            divisionDDL.append(`<option value="">Select</option>`);
+
             data.forEach(function (division) {
-                $('#DivisionId').append(new Option(division.Text, division.Value, false, false));
+                divisionDDL.append(new Option(division.Text, division.Value, false, false));
             });
         },
         error: function () {
@@ -37,8 +42,13 @@ $('#DivisionId').on('select2:select', function (event) {
         data: { divisionId: selectedDivisionId },
         dataType: 'json',
         success: function (data) {
+            $("#TownshipId").prop("disabled", false);
+            $('#TownshipId option').remove();
+            var townshipDDL = $('#TownshipId');
+            townshipDDL.append(`<option value="">Select</option>`);
+
             data.forEach(function (township) {
-                $('#TownshipId').append(new Option(township.Text, township.Value, false, false));
+                townshipDDL.append(new Option(township.Text, township.Value, false, false));
             });
         },
         error: function () {
@@ -47,10 +57,10 @@ $('#DivisionId').on('select2:select', function (event) {
     });
 });
 
-$('.saveBtn').on('click', function (event) {
+$('.updateBtn').on('click', function (event) {
     event.preventDefault();
 
-    if ($('#bankBranchForm').valid()) {
+    if ($('#editBankBranchForm').valid()) {
         // Show loading dialog
         const loadingDialog = Swal.fire({
             title: 'Loading...',
@@ -61,11 +71,11 @@ $('.saveBtn').on('click', function (event) {
             },
         });
 
-        var data = $("#bankBranchForm").serialize();
+        var data = $("#editBankBranchForm").serialize();
 
         $.ajax({
             type: 'POST',
-            url: '/BankBranchAjax/Save',
+            url: '/BankBranchAjax/Update/' + $("#BankBranchNameId").val(),
             contentType: 'application/x-www-form-urlencoded',
             data: data,
             success: function (data) {

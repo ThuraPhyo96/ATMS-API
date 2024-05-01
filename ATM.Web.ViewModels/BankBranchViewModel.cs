@@ -64,6 +64,12 @@ namespace ATM.Web.ViewModels
         [DisplayName("Status")]
         public int Status { get; set; }
         public string StatusDescription { get; set; }
+
+        public List<SelectListItem> BankNames { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> RegionNames { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> DivisionNames { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> TownshipNames { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> StatusNames { get; set; } = new List<SelectListItem>();
     }
 
     public class CreateBankBranchViewModel
@@ -125,7 +131,7 @@ namespace ATM.Web.ViewModels
         public List<SelectListItem> StatusNames { get; set; } = new List<SelectListItem>();
     }
 
-    public class UpdateBranchViewModel
+    public class UpdateBankBranchViewModel
     {
         public int BankNameId { get; set; }
         public string Name { get; set; }
@@ -135,7 +141,6 @@ namespace ATM.Web.ViewModels
         public int RegionId { get; set; }
         public int DivisionId { get; set; }
         public int TownshipId { get; set; }
-        public string Township { get; set; }
         public TimeSpan OpeningHour { get; set; }
         public TimeSpan ClosedHour { get; set; }
         public int Status { get; set; }
