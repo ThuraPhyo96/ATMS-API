@@ -24,7 +24,7 @@
             <tr>
                 <th>
                     <a asp-controller="BankBranchAjax" asp-action="Edit" asp-route-id="@item.BankBranchNameId" class="btn btn-secondary">Edit</a>
-                    @* <a asp-controller="BankBranch" asp-action="Delete" asp-route-id="@item.BankNameId" class="btn btn-danger">Edit</a> *@
+                    <button type="button" class="btn btn-danger btnDelete" data-id="@item.BankBranchNameId">Delete</button>
                 </th>
                 <td>@item.Code</td>
                 <td>@item.Name</td>
@@ -38,6 +38,7 @@
 
 @section Scripts
 {
+    <script src="~/scripts/bankbranch/bankbranchindex.js" asp-append-version="true"></script>
     <script type="text/javascript">
         let table = new DataTable('#bankBranchGrid');
     </script>

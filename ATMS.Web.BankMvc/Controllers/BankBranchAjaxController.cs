@@ -132,6 +132,34 @@ namespace ATMS.Web.BankMvc.Controllers
             return Content(data, MediaTypeNames.Application.Json);
         }
 
+        [HttpPost]
+        [ActionName("Delete")]
+        public async Task<IActionResult> DeleteBankBranch(int id)
+        {
+            var query = _dBContext.BankBranchNames.AsNoTracking();
+            var bankBranchObj = await query.FirstOrDefaultAsync(x => x.BankBranchNameId.Equals(id));
+
+            ResponseModel response = new();
+
+            if (bankBranchObj is null)
+            {
+                response.IsSuccess = false;
+                response.Message = "Not found!";
+            }
+            else
+            {
+                _dBContext.BankBranchNames.Remove(bankBranchObj);
+                int effectRow = await _dBContext.SaveChangesAsync();
+
+                response.IsSuccess = effectRow > 0;
+                response.Message = effectRow > 0 ? "Bank branch has been successfully deleted" : "Error: Deleting bank failed!";
+            }
+
+            // Serialize your data using the specified options
+            var data = System.Text.Json.JsonSerializer.Serialize(response, _jsonOption);
+            return Content(data, MediaTypeNames.Application.Json);
+        }
+
         #region Select Items
         private async Task<List<SelectListItem>> BankNameSelectItems()
         {
