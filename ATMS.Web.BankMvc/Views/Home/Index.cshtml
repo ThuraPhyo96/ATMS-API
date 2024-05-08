@@ -1,8 +1,30 @@
-﻿@{
+﻿@model DashboardViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row mt-5 mb-4">
+    <div class="col-md-6">
+        <div class="box">
+            <div id="bar"></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="box">
+            <div id="chart"></div>
+        </div>
+    </div>
 </div>
+
+@section Scripts
+{
+    <script>
+        let _townshipSeries = @Html.Raw(JsonConvert.SerializeObject(Model.TownshipViewModel.Series));
+        let _townshipLabels = @Html.Raw(JsonConvert.SerializeObject(Model.TownshipViewModel.Labels));
+
+        let _bankSeries = @Html.Raw(JsonConvert.SerializeObject(Model.BankViewModel.Series));
+        let _bankLabels = @Html.Raw(JsonConvert.SerializeObject(Model.BankViewModel.Labels));
+    </script>
+    <script src="~/scripts/home/homeindex.js" asp-append-version="true"></script>
+}
