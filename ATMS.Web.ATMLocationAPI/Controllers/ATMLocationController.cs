@@ -41,6 +41,18 @@ namespace ATMS.Web.ATMLocationAPI.Controllers
                 return NotFound();
         }
 
+        [HttpGet("pageNumber/{pageNumber}/pageSize/{pageSize}")]
+        public async Task<ActionResult> Get(int pageNumber, int pageSize)
+        {
+            ATMLocationListResponseDto aTMLocation = await _aTMLocationAppService.GetATMLocationBy(new ATMLocationFilterDto(pageNumber, pageSize));
+            if (aTMLocation.StatusCode == StatusCodes.Status200OK)
+            {
+                return Ok(JsonConvert.SerializeObject(aTMLocation));
+            }
+            else
+                return NotFound();
+        }
+
         // POST api/<ATMLocationController>
         [HttpPost]
         public void Post([FromBody] string value)

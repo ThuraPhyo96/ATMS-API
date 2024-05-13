@@ -35,6 +35,15 @@ namespace ATMS.Web.Dto.Dtos
 
     public class ATMLocationListDto : ResponseDto
     {
-        public List<ATMLocationDto> Data { get; set; } = new List<ATMLocationDto> ();
+        public List<ATMLocationDto> Data { get; set; } = new List<ATMLocationDto>();
+    }
+
+    public class ATMLocationListResponseDto : ResponseDto
+    {
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public int PageCount { get; set; }
+        public bool IsEndOfPage => PageNumber == PageCount;
+        public List<ATMLocationDto> Data { get; set; } = new List<ATMLocationDto>();
     }
 }
