@@ -2,12 +2,9 @@
 using ATM.Web.ViewModels;
 using ATMS.Web.BankMvc.Data;
 using ATMS.Web.Dto.Models;
-using Azure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using System;
 using System.Net.Mime;
 using System.Text.Json;
 
@@ -30,16 +27,35 @@ namespace ATMS.Web.BankMvc.Controllers
         }
 
         [ActionName("Index")]
-        public async Task<IActionResult> BankBranchIndex()
+        public async Task<IActionResult> BankBranchIndex(int pageNo = 1, int pageSize = 1)
         {
             var query = _dBContext.BankBranchNames
                 .Include(x => x.BankName)
                 .Include(x => x.Region)
                 .Include(x => x.Division)
                 .Include(x => x.Township)
-               .AsNoTracking();
-            var records = await query.Select(x => ChangeBankBranchViewModel(x)).ToListAsync();
-            return View("BankBranchIndex", records);
+                .AsNoTracking();
+
+            var total = await query.CountAsync();
+            int pageCount = total / pageSize;
+            if (total % pageSize > 0)
+                pageCount++;
+
+            var objs = await query
+                .Skip(pageSize * (pageNo - 1))
+                .Take(pageSize)
+                .ToListAsync();
+
+            var records = objs.Select(x => ChangeBankBranchViewModel(x)).ToList();
+
+            var model = new BankBranchListViewModel
+            {
+                PageNumber = pageNo,
+                PageSize = pageSize,
+                PageCount = pageCount,
+                Data = records
+            };
+            return View("BankBranchIndex", model);
         }
 
         [HttpGet]

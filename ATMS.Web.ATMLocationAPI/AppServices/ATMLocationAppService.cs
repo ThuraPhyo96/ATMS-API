@@ -52,7 +52,7 @@ namespace ATMS.Web.ATMLocationAPI.AppServices
             }
         }
 
-        public async Task<ATMLocationListResponseDto> GetATMLocationBy(ATMLocationFilterDto input)
+        public async Task<ATMLocationListResponseDto> GetATMLocationBy(FilterDto input)
         {
             var query = _context.ATMLocations
                 .Include(x => x.BankName)

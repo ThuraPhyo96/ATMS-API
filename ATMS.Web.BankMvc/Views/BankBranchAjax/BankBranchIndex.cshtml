@@ -1,13 +1,25 @@
-﻿@model List<BankBranchViewModel>
+﻿@model BankBranchListViewModel
 
 @if (TempData["Message"] is not null)
 {
     @await Html.PartialAsync("_ShowMessageModal", TempData["Message"])
 }
 
+@{
+    int pageNumber = Model.PageNumber;
+    int pageSize = Model.PageSize;
+    int pageCount = Model.PageCount;
+
+    string GetUrl(int pageNo)
+    {
+        return $"{Url.Action("Index", "BankBranchAjax", new { pageNo = pageNo, pageSize = pageSize })}";
+
+    };
+}
+
 <a asp-controller="BankBranchAjax" asp-action="Create" class="btn btn-primary">New</a>
 
-<table id="bankBranchGrid" class="display" style="width:100%">
+<table class="table table-bordered mt-5" style="width:100%">
     <thead>
         <tr>
             <th></th>
@@ -19,7 +31,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Data)
         {
             <tr>
                 <th>
@@ -36,10 +48,74 @@
     </tbody>
 </table>
 
+<nav class="mt-5">
+    <ul class="pagination justify-content-end">
+        @{
+            <li class="page-item @(pageNumber == 1 ? "disabled" : "")">
+                <a class="page-link" href="@GetUrl(pageNumber-1)">Previous</a>
+            </li>
+            if (pageCount <= 9)
+            {
+                for (int i = 1; i <= pageCount; i++)
+                {
+                    <li class="page-item @(i == pageNumber ? "active aria-current='page'" : "")">
+                        <a class="page-link" href="@GetUrl(i)">@i</a>
+                    </li>
+                }
+            }
+            else
+            {
+                if (pageNumber <= 3 || pageCount - 2 <= pageNumber)
+                {
+                    for (int i = 1; i <= 4; i++)
+                    {
+                        <li class="page-item @(i == pageNumber ? "active aria-current='page'" : "")">
+                            <a class="page-link" href="@GetUrl(i)">@i</a>
+                        </li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link">...</a>
+                    </li>
+                    for (int i = pageCount - 3; i <= pageCount; i++)
+                    {
+                        <li class="page-item @(i == pageNumber ? "active aria-current='page'" : "")">
+                            <a class="page-link" href="@GetUrl(i)">@i</a>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@GetUrl(1)">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">...</a>
+                    </li>
+                    for (int i = pageNumber - 2; i <= pageNumber + 2; i++)
+                    {
+                        <li class="page-item @(i == pageNumber ? "active aria-current='page'" : "")">
+                            <a class="page-link" href="@GetUrl(i)">@i</a>
+                        </li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link" href="#">...</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="@GetUrl(pageCount)">@pageCount</a>
+                    </li>
+                }
+            }
+            <li class="page-item @(pageNumber == pageCount ? "disabled" : "")">
+                <a class="page-link" href="@GetUrl(pageNumber+1)">Next</a>
+            </li>
+        }
+    </ul>
+</nav>
+
 @section Scripts
 {
     <script src="~/scripts/bankbranch/bankbranchindex.js" asp-append-version="true"></script>
     <script type="text/javascript">
-        let table = new DataTable('#bankBranchGrid');
+        // let table = new DataTable('#bankBranchGrid');
     </script>
 }

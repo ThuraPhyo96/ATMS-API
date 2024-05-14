@@ -145,4 +145,13 @@ namespace ATM.Web.ViewModels
         public TimeSpan ClosedHour { get; set; }
         public int Status { get; set; }
     }
+
+    public class BankBranchListViewModel
+    {
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public int PageCount { get; set; }
+        public bool IsEndOfPage => PageNumber == PageCount;
+        public List<BankBranchViewModel> Data { get; set; } = new List<BankBranchViewModel>();
+    }
 }
