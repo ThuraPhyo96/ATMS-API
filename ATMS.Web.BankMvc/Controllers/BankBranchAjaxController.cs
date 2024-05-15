@@ -90,6 +90,70 @@ namespace ATMS.Web.BankMvc.Controllers
             return View("BankBranchPaginationIndex", model);
         }
 
+        [ActionName("PaginationAjaxIndex")]
+        public async Task<IActionResult> BankBranchPaginationAjaxIndex(int pageNo = 1, int pageSize = 1)
+        {
+            var query = _dBContext.BankBranchNames
+                .Include(x => x.BankName)
+                .Include(x => x.Region)
+                .Include(x => x.Division)
+                .Include(x => x.Township)
+                .AsNoTracking();
+
+            var total = await query.CountAsync();
+            int pageCount = total / pageSize;
+            if (total % pageSize > 0)
+                pageCount++;
+
+            var objs = await query
+                .Skip(pageSize * (pageNo - 1))
+                .Take(pageSize)
+                .ToListAsync();
+
+            var records = objs.Select(x => ChangeBankBranchViewModel(x)).ToList();
+
+            var model = new BankBranchListViewModel
+            {
+                PageNumber = pageNo,
+                PageSize = pageSize,
+                PageCount = pageCount,
+                Data = records
+            };
+            return View("BankBranchPaginationAjaxIndex", model);
+        }
+
+        [ActionName("PartialPagination")]
+        public async Task<IActionResult> PartialPagination(int pageNo = 1, int pageSize = 1)
+        {
+            var query = _dBContext.BankBranchNames
+                    .Include(x => x.BankName)
+                    .Include(x => x.Region)
+                    .Include(x => x.Division)
+                    .Include(x => x.Township)
+                    .AsNoTracking();
+
+            var total = await query.CountAsync();
+            int pageCount = total / pageSize;
+            if (total % pageSize > 0)
+                pageCount++;
+
+            var objs = await query
+                .Skip(pageSize * (pageNo - 1))
+                .Take(pageSize)
+                .ToListAsync();
+
+            var records = objs.Select(x => ChangeBankBranchViewModel(x)).ToList();
+
+            var model = new BankBranchListViewModel
+            {
+                PageNumber = pageNo,
+                PageSize = pageSize,
+                PageCount = pageCount,
+                Data = records
+            };
+            return PartialView("_BankBranchGrid", model);
+        }
+
         [HttpGet]
         [ActionName("Create")]
         public async Task<IActionResult> CreateBankBranch()

@@ -1,0 +1,10 @@
+﻿@model BankBranchListViewModel
+
+<div id="grid">
+    @await Html.PartialAsync("_BankBranchGrid", Model)
+</div>
+
+@section Scripts
+{
+    <script src="~/scripts/bankbranch/bankbranchpaginationajaxindex.js" asp-append-version="true"></script>
+}
