@@ -3,10 +3,8 @@ using ATM.Web.ViewModels;
 using ATMS.Web.Dto.Dtos;
 using ATMS.Web.Dto.Models;
 using ATMS.Web.Shared;
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using System.Net.Mime;
 using System.Text.Json;
 
@@ -28,14 +26,27 @@ namespace ATMS.Web.BankMvc.Controllers
             };
         }
 
+        #region CRUD
         [ActionName("Index")]
         public IActionResult ATMLocationIndex()
         {
-            string query = @"SELECT [ATMLocationId]
-                          ,[Address]
-                          ,[Status]
-                      FROM [dbo].[ATMLocations]";
-            var dtos = _adoDotNetService.Query<ATMLocationDto>(query);
+            string query = @"SELECT
+                                location.ATMLocationId,
+                                bankName.Name AS BankName,                                
+                                bankBranch.Name AS BankBranchName,
+                                region.Name AS RegionName,
+                                division.Name AS DivisionName,
+                                township.Name AS TownshipName,
+                                location.Address,
+                                location.Status
+                            FROM ATMLocations AS location
+                            LEFT JOIN BankNames AS bankName ON bankName.BankNameId = location.BankNameId
+                            LEFT JOIN BankBranchNames AS bankBranch ON bankBranch.BankBranchNameId = location.BankBranchNameId
+                            LEFT JOIN Regions AS region ON region.RegionId = location.RegionId                           
+                            LEFT JOIN Divisions AS division ON division.DivisionId = location.DivisionId
+                            LEFT JOIN Townships AS township ON township.TownshipId = location.TownshipId;";
+
+            var dtos = _adoDotNetService.Query<ATMLocationResponseDto>(query);
             var model = dtos.Select(x => ChangeToViewModel(x)).ToList();
             return View("ATMLocationIndex", model);
         }
@@ -72,12 +83,83 @@ namespace ATMS.Web.BankMvc.Controllers
             return Content(data, MediaTypeNames.Application.Json);
         }
 
+        [HttpGet]
+        [ActionName("Edit")]
+        public IActionResult EditATMLocation(int id)
+        {
+            string query = @"SELECT *
+                            FROM ATMLocations 
+                            WHERE ATMLocationId = @ATMLocationId;";
+            Dictionary<string, object>? parameters = new()
+            {
+                { "@ATMLocationId",id.ToString() }
+            };
+            var dtos = _adoDotNetService.Query<ATMLocationResponseDto>(query, parameters);
+            var record = dtos.FirstOrDefault();
+
+            if (record is null)
+                return BadRequest();
+            else
+            {
+                var model = ChangeToViewModel(record);
+                model.BankNames = BankNameSelectItems();
+                model.BankBranchNames = BankBranchNameSelectItems();
+                model.RegionNames = RegionSelectItems();
+                model.DivisionNames = DivisionSelectItems();
+                model.TownshipNames = TownshipSelectItems();
+                model.StatusNames = BankStatusSelectItems();
+                return View("EditATMLocation", model);
+            }
+        }
+
+        [HttpPost]
+        [ActionName("Update")]
+        public IActionResult UpdateATMLocation(int id, UpdateATMLocationViewModel model)
+        {
+            string query = @"SELECT *
+                            FROM ATMLocations 
+                            WHERE ATMLocationId = @ATMLocationId;";
+            Dictionary<string, object>? parameterId = new()
+            {
+                { "@ATMLocationId",id.ToString() }
+            };
+            var dtos = _adoDotNetService.Query<ATMLocationResponseDto>(query, parameterId);
+            var record = dtos.FirstOrDefault();
+            ResponseModel response = new();
+
+            if (record is null)
+            {
+                response.IsSuccess = false;
+                response.Message = "Not found!";
+            }
+            else
+            {
+                (string updateQuery, Dictionary<string, object> parameters) = GetUpdateQueryAndParameters(id, model);
+                var effectRow = _adoDotNetService.Execute(updateQuery, parameters);
+
+                response.IsSuccess = effectRow > 0;
+                response.Message = effectRow > 0 ? "ATM location has been successfully updated" : "Error: Update ATM location failed!";
+            }
+
+            // Serialize your data using the specified options
+            var data = JsonSerializer.Serialize(response, _jsonOption);
+            return Content(data, MediaTypeNames.Application.Json);
+        }
+        #endregion
+
         #region Get Dropdowm items
         private List<SelectListItem> BankNameSelectItems()
         {
             string query = @"SELECT * FROM [dbo].[BankNames]";
             var dtos = _adoDotNetService.Query<BankNameDto>(query);
             return dtos.Select(x => new SelectListItem() { Value = x.BankNameId.ToString(), Text = x.Name }).ToList();
+        }
+
+        private List<SelectListItem> BankBranchNameSelectItems()
+        {
+            string query = @"SELECT * FROM [dbo].[BankBranchNames]";
+            var dtos = _adoDotNetService.Query<BankBranchNameDto>(query);
+            return dtos.Select(x => new SelectListItem() { Value = x.BankBranchNameId.ToString(), Text = x.Name }).ToList();
         }
 
         private List<SelectListItem> RegionSelectItems()
@@ -164,11 +246,19 @@ namespace ATMS.Web.BankMvc.Controllers
         }
         #endregion
 
-        private static ATMLocationViewModel ChangeToViewModel(ATMLocationDto aTMLocation)
+        #region Get Query With Parameters
+        private static ATMLocationViewModel ChangeToViewModel(ATMLocationResponseDto aTMLocation)
         {
             return new ATMLocationViewModel()
             {
-                Address = aTMLocation.Address
+                ATMLocationId = aTMLocation.ATMLocationId,
+                BankName = aTMLocation!.BankName,
+                BankBranchName = aTMLocation?.BankBranchName,
+                RegionName = aTMLocation!.RegionName,
+                DivisionName = aTMLocation!.DivisionName,
+                TownshipName = aTMLocation!.TownshipName,
+                Address = aTMLocation?.Address,
+                Status = Helper.GetEnumDescriptionByValue<EATMStatus>(aTMLocation!.Status)
             };
         }
 
@@ -209,5 +299,37 @@ namespace ATMS.Web.BankMvc.Controllers
 
             return (query, parameters);
         }
+
+        private static (string, Dictionary<string, object>) GetUpdateQueryAndParameters(int id, UpdateATMLocationViewModel model)
+        {
+            string query = @"UPDATE [dbo].[ATMLocations]
+                            SET [BankNameId] = @BankNameId
+                                ,[BankBranchNameId] = @BankBranchNameId
+                                ,[RegionId] = @RegionId
+                                ,[DivisionId] = @DivisionId
+                                ,[TownshipId] = @TownshipId
+                                ,[Address] = @Address
+                                ,[Status] = @Status
+                            WHERE ATMLocationId = @ATMLocationId;";
+
+            string? bankBranch = null;
+            if (model.BankBranchNameId is not null)
+                bankBranch = model.BankBranchNameId.ToString();
+
+            Dictionary<string, object> parameters = new()
+            {
+                { "@ATMLocationId", id.ToString() },
+                { "@BankNameId", model.BankNameId.ToString() },
+                { "@BankBranchNameId", bankBranch! },
+                { "@RegionId", model.RegionId.ToString() },
+                { "@DivisionId", model.DivisionId.ToString() },
+                { "@TownshipId", model.TownshipId.ToString() },
+                { "@Address", model.Address },
+                { "@Status", model.Status.ToString() },
+            };
+
+            return (query, parameters);
+        }
+        #endregion
     }
 }

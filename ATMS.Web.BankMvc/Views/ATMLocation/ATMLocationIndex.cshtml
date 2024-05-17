@@ -10,13 +10,14 @@
 <table id="atmGrid" class="display" style="width:100%">
     <thead>
         <tr>
-@*             <th></th>
-            <th>Code</th>
-            <th>Name</th>
-            <th>Telephone Number</th>
-            <th>Email Address</th> *@
-            <th> Address</th>
-@*             <th>Enable?</th> *@
+           @*  <th></th> *@
+            <th>Bank Name</th>
+            <th>Bank Branch Name</th>
+            <th>Region</th>
+            <th>Division</th>
+            <th>Township</th>
+            <th>Address</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
@@ -24,15 +25,16 @@
         {
             <tr>
                 @* <th>
-                    <a asp-controller="Bank" asp-action="Edit" asp-route-id="@item.BankNameId" class="btn btn-secondary">Edit</a>
-                    <a asp-controller="Bank" asp-action="Delete" asp-route-id="@item.BankNameId" class="btn btn-danger">Edit</a>
-                </th>
-                <td>@item.Code</td>
-                <td>@item.Name</td>
-                <td>@item.TelephoneNumber</td>
-                <td>@item.Email</td> *@
+                    <a asp-controller="ATMLocation" asp-action="Edit" asp-route-id="@item.ATMLocationId" class="btn btn-secondary">Edit</a>
+                    <a asp-controller="ATMLocation" asp-action="Delete" asp-route-id="@item.ATMLocationId" class="btn btn-danger">Delete</a>
+                </th> *@
+                <td>@item.BankName</td>
+                <td>@item.BankBranchName</td>
+                <td>@item.RegionName</td>
+                <td>@item.DivisionName</td>
+                <td>@item.TownshipName</td>
                 <td>@item.Address</td>
-                @* <td><input type="checkbox" class="form-check-input" @(item.IsActive ? "checked" : "") /></td> *@
+                <td>@item.Status</td>
             </tr>
         }
     </tbody>

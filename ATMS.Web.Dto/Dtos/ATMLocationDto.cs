@@ -46,4 +46,29 @@ namespace ATMS.Web.Dto.Dtos
         public bool IsEndOfPage => PageNumber == PageCount;
         public List<ATMLocationDto> Data { get; set; } = new List<ATMLocationDto>();
     }
+
+    public class ATMLocationResponseDto
+    {
+        public int ATMLocationId { get; set; }
+
+        public int BankNameId { get; set; }
+        public string BankName { get; set; }
+
+        public int? BankBranchNameId { get; set; }
+        public string BankBranchName { get; set; }
+
+        public int RegionId { get; set; }
+        public string RegionName { get; set; }
+
+        public int DivisionId { get; set; }
+        public string DivisionName { get; set; }
+
+        public int TownshipId { get; set; }
+        public string TownshipName { get; set; }
+
+        [StringLength(MaxLength.L_1000)]
+        public string Address { get; set; }
+
+        public int Status { get; set; }
+    }
 }
