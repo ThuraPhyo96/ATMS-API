@@ -1,13 +1,18 @@
 using ATMS.Web.BankMvc.Data;
+using ATMS.Web.Shared;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register DB Context
+// Register DB Context as Transient because of middle ware usage and by default, it is scoped lifetime
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+}, 
+optionsLifetime: ServiceLifetime.Transient,
+contextLifetime: ServiceLifetime.Transient);
+
+builder.Services.AddScoped(n => new AdoDotNetService(builder.Configuration.GetConnectionString("DefaultConnection")!));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

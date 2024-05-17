@@ -16,15 +16,15 @@ namespace ATMS.Web.BankMvc.Data
 
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder builder)
-        {
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json")
-                .Build();
+        //protected override void OnConfiguring(DbContextOptionsBuilder builder)
+        //{
+        //    IConfigurationRoot configuration = new ConfigurationBuilder()
+        //        .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+        //        .AddJsonFile("appsettings.json")
+        //        .Build();
 
-            builder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-        }
+        //    builder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+        //}
 
         public DbSet<Region> Regions { get; set; }
         public DbSet<Division> Divisions { get; set; }

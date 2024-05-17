@@ -31,6 +31,7 @@
     <ProjectReference Include="..\ATM.Web.Helpers\ATM.Web.Helpers.csproj" />
     <ProjectReference Include="..\ATM.Web.ViewModels\ATM.Web.ViewModels.csproj" />
     <ProjectReference Include="..\ATMS.Web.Dto\ATMS.Web.Dto.csproj" />
+    <ProjectReference Include="..\ATMS.Web.Shared\ATMS.Web.Shared.csproj" />
   </ItemGroup>
 
 </Project>

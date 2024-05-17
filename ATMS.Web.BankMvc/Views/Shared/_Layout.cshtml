@@ -36,6 +36,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="BankBranchAjax" asp-action="PaginationAjaxIndex">Bank Branch</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="ATMLocation" asp-action="Index">ATM Location</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -63,6 +66,6 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     @await Html.PartialAsync("_ValidationScriptsPartial")
     @await RenderSectionAsync("Scripts", required: false)
-    
+
 </body>
 </html>

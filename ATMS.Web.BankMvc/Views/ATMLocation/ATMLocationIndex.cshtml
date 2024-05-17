@@ -1,0 +1,46 @@
+﻿@model List<ATMLocationViewModel>
+
+@if (TempData["Message"] is not null)
+{
+    @await Html.PartialAsync("_ShowMessageModal", TempData["Message"])
+}
+
+<a asp-controller="ATMLocation" asp-action="Create" class="btn btn-primary">New</a>
+
+<table id="atmGrid" class="display" style="width:100%">
+    <thead>
+        <tr>
+@*             <th></th>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Telephone Number</th>
+            <th>Email Address</th> *@
+            <th> Address</th>
+@*             <th>Enable?</th> *@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                @* <th>
+                    <a asp-controller="Bank" asp-action="Edit" asp-route-id="@item.BankNameId" class="btn btn-secondary">Edit</a>
+                    <a asp-controller="Bank" asp-action="Delete" asp-route-id="@item.BankNameId" class="btn btn-danger">Edit</a>
+                </th>
+                <td>@item.Code</td>
+                <td>@item.Name</td>
+                <td>@item.TelephoneNumber</td>
+                <td>@item.Email</td> *@
+                <td>@item.Address</td>
+                @* <td><input type="checkbox" class="form-check-input" @(item.IsActive ? "checked" : "") /></td> *@
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        let table = new DataTable('#atmGrid');
+    </script>
+}
