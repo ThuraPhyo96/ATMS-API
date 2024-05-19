@@ -13,6 +13,7 @@ optionsLifetime: ServiceLifetime.Transient,
 contextLifetime: ServiceLifetime.Transient);
 
 builder.Services.AddScoped(n => new AdoDotNetService(builder.Configuration.GetConnectionString("DefaultConnection")!));
+builder.Services.AddScoped(n => new DapperService(builder.Configuration.GetConnectionString("DefaultConnection")!));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
