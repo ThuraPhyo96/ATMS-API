@@ -5,6 +5,7 @@ using ATMS.Web.Dto.Models;
 using ATMS.Web.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using System.Net.Mime;
 using System.Text.Json;
 
@@ -101,7 +102,7 @@ namespace ATMS.Web.BankMvc.Controllers
                 return BadRequest();
             else
             {
-                var model = ChangeToViewModel(record);
+                var model = ChangeToEditViewModel(record);
                 model.BankNames = BankNameSelectItems();
                 model.BankBranchNames = BankBranchNameSelectItems();
                 model.RegionNames = RegionSelectItems();
@@ -139,6 +140,40 @@ namespace ATMS.Web.BankMvc.Controllers
 
                 response.IsSuccess = effectRow > 0;
                 response.Message = effectRow > 0 ? "ATM location has been successfully updated" : "Error: Update ATM location failed!";
+            }
+
+            // Serialize your data using the specified options
+            var data = JsonSerializer.Serialize(response, _jsonOption);
+            return Content(data, MediaTypeNames.Application.Json);
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public IActionResult DeleteATMLocation(int id)
+        {
+            string query = @"SELECT *
+                            FROM ATMLocations 
+                            WHERE ATMLocationId = @ATMLocationId;";
+            Dictionary<string, object>? parameterId = new()
+            {
+                { "@ATMLocationId",id.ToString() }
+            };
+            var dtos = _adoDotNetService.Query<ATMLocationResponseDto>(query, parameterId);
+            var record = dtos.FirstOrDefault();
+            ResponseModel response = new();
+
+            if (record is null)
+            {
+                response.IsSuccess = false;
+                response.Message = "Not found!";
+            }
+            else
+            {
+                (string deleteQuery, Dictionary<string, object> parameters) = GetDeleteQueryAndParameters(id);
+                var effectRow = _adoDotNetService.Execute(deleteQuery, parameters);
+
+                response.IsSuccess = effectRow > 0;
+                response.Message = effectRow > 0 ? "ATM location has been successfully deleted" : "Error: Delete ATM location failed!";
             }
 
             // Serialize your data using the specified options
@@ -262,6 +297,21 @@ namespace ATMS.Web.BankMvc.Controllers
             };
         }
 
+        private static UpdateATMLocationViewModel ChangeToEditViewModel(ATMLocationResponseDto aTMLocation)
+        {
+            return new UpdateATMLocationViewModel()
+            {
+                ATMLocationId = aTMLocation.ATMLocationId,
+                BankNameId = aTMLocation.BankNameId,
+                BankBranchNameId = aTMLocation!.BankBranchNameId,
+                RegionId = aTMLocation.RegionId,
+                DivisionId = aTMLocation.DivisionId,
+                TownshipId = aTMLocation.TownshipId,
+                Address = aTMLocation?.Address,
+                Status= aTMLocation!.Status
+            };
+        }
+
         private static (string, Dictionary<string, object>) GetCreateQueryAndParameters(CreateATMLocationViewModel model)
         {
             string query = @"INSERT INTO [dbo].[ATMLocations]
@@ -326,6 +376,19 @@ namespace ATMS.Web.BankMvc.Controllers
                 { "@TownshipId", model.TownshipId.ToString() },
                 { "@Address", model.Address },
                 { "@Status", model.Status.ToString() },
+            };
+
+            return (query, parameters);
+        }
+
+        private static (string, Dictionary<string, object>) GetDeleteQueryAndParameters(int id)
+        {
+            string query = @"DELETE [dbo].[ATMLocations]
+                            WHERE ATMLocationId = @ATMLocationId;";
+
+            Dictionary<string, object> parameters = new()
+            {
+                { "@ATMLocationId", id.ToString() },
             };
 
             return (query, parameters);

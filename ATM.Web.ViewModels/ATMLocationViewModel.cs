@@ -1,6 +1,7 @@
 ﻿using ATMS.Web.Dto.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace ATM.Web.ViewModels
@@ -62,12 +63,40 @@ namespace ATM.Web.ViewModels
 
     public class UpdateATMLocationViewModel
     {
+        public int ATMLocationId { get; set; }
+
+        [Required]
+        [DisplayName("Bank Name")]
         public int BankNameId { get; set; }
+
+        [DisplayName("Bank Branch Name")]
         public int? BankBranchNameId { get; set; }
+
+        [Required]
+        [DisplayName("Region")]
         public int RegionId { get; set; }
+
+        [Required]
+        [DisplayName("Division")]
         public int DivisionId { get; set; }
+
+        [Required]
+        [DisplayName("Township")]
         public int TownshipId { get; set; }
+
+        [Required]
+        [DisplayName("Address")]
         public string Address { get; set; }
+
+        [Required]
+        [DisplayName("Status")]
         public int Status { get; set; }
+
+        public List<SelectListItem> BankNames { get; set; }
+        public List<SelectListItem> BankBranchNames { get; set; }
+        public List<SelectListItem> RegionNames { get; set; }
+        public List<SelectListItem> DivisionNames { get; set; }
+        public List<SelectListItem> TownshipNames { get; set; }
+        public List<SelectListItem> StatusNames { get; set; }
     }
 }

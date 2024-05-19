@@ -1,9 +1,5 @@
-﻿using ATMS.Web.Dto.Helpers;
-using ATMS.Web.Dto;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 using ATMS.Web.Dto.Models;
 
 namespace ATMS.Web.Dto.Dtos

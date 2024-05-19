@@ -10,7 +10,7 @@
 <table id="atmGrid" class="display" style="width:100%">
     <thead>
         <tr>
-           @*  <th></th> *@
+            <th></th>
             <th>Bank Name</th>
             <th>Bank Branch Name</th>
             <th>Region</th>
@@ -24,10 +24,10 @@
         @foreach (var item in Model)
         {
             <tr>
-                @* <th>
+                <th>
                     <a asp-controller="ATMLocation" asp-action="Edit" asp-route-id="@item.ATMLocationId" class="btn btn-secondary">Edit</a>
-                    <a asp-controller="ATMLocation" asp-action="Delete" asp-route-id="@item.ATMLocationId" class="btn btn-danger">Delete</a>
-                </th> *@
+                    <button type="button" class="btn btn-danger btnDelete" data-id="@item.ATMLocationId">Delete</button>
+                </th>
                 <td>@item.BankName</td>
                 <td>@item.BankBranchName</td>
                 <td>@item.RegionName</td>
@@ -42,7 +42,5 @@
 
 @section Scripts
 {
-    <script type="text/javascript">
-        let table = new DataTable('#atmGrid');
-    </script>
+    <script src="~/scripts/atmlocation/atmlocationindex.js" asp-append-version="true"></script>
 }
