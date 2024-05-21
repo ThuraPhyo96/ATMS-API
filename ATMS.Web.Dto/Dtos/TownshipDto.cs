@@ -38,9 +38,14 @@ namespace ATMS.Web.Dto.Dtos
     public class TownshipResponseDto
     {
         public int TownshipId { get; set; }
+
+        public int RegionId { get; set; }
         public string RegionName { get; set; }
+
+        public int DivisionId { get; set; }
         public string DivisionName { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public int Sort { get; set; }
     }
 }

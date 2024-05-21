@@ -38,4 +38,28 @@ namespace ATM.Web.ViewModels
 
         public List<SelectListItem> RegionNames { get; set; }
     }
+
+    public class UpdateTownshipViewModel
+    {
+        public int TownshipId { get; set; }
+
+        [Required]
+        [DisplayName("Region")]
+        public int RegionId { get; set; }
+
+        [Required]
+        [DisplayName("Division")]
+        public int DivisionId { get; set; }
+
+        [Required]
+        [DisplayName("Name")]
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        public int Sort { get; set; }
+
+        public List<SelectListItem> RegionNames { get; set; }
+        public List<SelectListItem> DivisionNames { get; set; }
+    }
 }

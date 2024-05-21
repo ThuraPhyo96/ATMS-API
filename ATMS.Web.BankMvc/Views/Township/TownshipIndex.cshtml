@@ -5,7 +5,7 @@
 <table id="townshipGrid" class="display" style="width:100%">
     <thead>
         <tr>
-           @*  <th></th> *@
+            <th></th>
             <th>Region</th>
             <th>Division</th>
             <th>Township</th>
@@ -16,10 +16,10 @@
         @foreach (var item in Model)
         {
             <tr>
-               @*  <th>
-                    <a asp-controller="ATMLocation" asp-action="Edit" asp-route-id="@item.ATMLocationId" class="btn btn-secondary">Edit</a>
-                    <button type="button" class="btn btn-danger btnDelete" data-id="@item.ATMLocationId">Delete</button>
-                </th> *@
+                <th>
+                    <a asp-controller="Township" asp-action="Edit" asp-route-id="@item.TownshipId" class="btn btn-secondary">Edit</a>
+                    <button type="button" class="btn btn-danger" onclick="deleteTownship(@item.TownshipId)">Delete</button>
+                </th>
                 <td>@item.RegionName</td>
                 <td>@item.DivisionName</td>
                 <td>@item.Name</td>

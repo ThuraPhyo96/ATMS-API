@@ -71,6 +71,99 @@ namespace ATMS.Web.BankMvc.Controllers
 
             return Content(data, MediaTypeNames.Application.Json);
         }
+
+        [HttpGet]
+        [ActionName("Edit")]
+        public IActionResult EditTownship(int id)
+        {
+            string query = @"SELECT *
+                            FROM Townships 
+                            WHERE TownshipId = @TownshipId;";
+            Dictionary<string, object>? parameters = new()
+            {
+                { "@TownshipId",id.ToString() }
+            };
+            var dtos = _dapperService.Query<TownshipResponseDto>(query, parameters);
+            var record = dtos.FirstOrDefault();
+
+            if (record is null)
+                return BadRequest();
+            else
+            {
+                var model = ChangeToEditViewModel(record);
+                model.RegionNames = RegionSelectItems();
+                model.DivisionNames = DivisionSelectItems();
+                return View("EditTownship", model);
+            }
+        }
+
+        [HttpPost]
+        [ActionName("Update")]
+        public IActionResult UpdateTownship(int id, UpdateTownshipViewModel model)
+        {
+            string query = @"SELECT *
+                            FROM Townships 
+                            WHERE TownshipId = @TownshipId;";
+            Dictionary<string, object>? parameters = new()
+            {
+                { "@TownshipId",id.ToString() }
+            };
+            var dtos = _dapperService.Query<TownshipResponseDto>(query, parameters);
+            var record = dtos.FirstOrDefault();
+            ResponseModel response = new();
+
+            if (record is null)
+            {
+                response.IsSuccess = false;
+                response.Message = "Not found!";
+            }
+            else
+            {
+                (string updateQuery, Dictionary<string, object> updateParameters) = GetUpdateQueryAndParameters(id, model);
+                var effectRow = _dapperService.Execute(updateQuery, updateParameters);
+
+                response.IsSuccess = effectRow > 0;
+                response.Message = effectRow > 0 ? "Township has been successfully updated" : "Error: Update Township failed!";
+            }
+
+            // Serialize your data using the specified options
+            var data = JsonSerializer.Serialize(response, _jsonOption);
+            return Content(data, MediaTypeNames.Application.Json);
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public IActionResult DeleteTownship(int id)
+        {
+            string query = @"SELECT *
+                            FROM Townships 
+                            WHERE TownshipId = @TownshipId;";
+            Dictionary<string, object>? parameters = new()
+            {
+                { "@TownshipId",id.ToString() }
+            };
+            var dtos = _dapperService.Query<TownshipResponseDto>(query, parameters);
+            var record = dtos.FirstOrDefault();
+            ResponseModel response = new();
+
+            if (record is null)
+            {
+                response.IsSuccess = false;
+                response.Message = "Not found!";
+            }
+            else
+            {
+                (string deleteQuery, Dictionary<string, object> deleteParameters) = GetDeleteQueryAndParameters(id);
+                var effectRow = _dapperService.Execute(deleteQuery, deleteParameters);
+
+                response.IsSuccess = effectRow > 0;
+                response.Message = effectRow > 0 ? "Township has been successfully deleted" : "Error: Delete Township failed!";
+            }
+
+            // Serialize your data using the specified options
+            var data = JsonSerializer.Serialize(response, _jsonOption);
+            return Content(data, MediaTypeNames.Application.Json);
+        }
         #endregion
 
         #region Get Dropdowm items
@@ -117,6 +210,19 @@ namespace ATMS.Web.BankMvc.Controllers
             };
         }
 
+        private static UpdateTownshipViewModel ChangeToEditViewModel(TownshipResponseDto input)
+        {
+            return new UpdateTownshipViewModel()
+            {
+                TownshipId = input.TownshipId,
+                RegionId = input.RegionId,
+                DivisionId = input.DivisionId,
+                Name = input.Name,
+                Description = input.Description,
+                Sort = input.Sort
+            };
+        }
+
         private static (string, Dictionary<string, object>) GetCreateQueryAndParameters(CreateTownshipViewModel model)
         {
             string query = @"INSERT INTO [dbo].[Townships]
@@ -142,6 +248,40 @@ namespace ATMS.Web.BankMvc.Controllers
                 { "@Name", model.Name },
                 { "@Description", model.Description },
                 { "@Sort", model.Sort }
+            };
+
+            return (query, parameters);
+        }
+
+        private static (string, Dictionary<string, object>) GetUpdateQueryAndParameters(int id, UpdateTownshipViewModel model)
+        {
+            string query = @"UPDATE [dbo].[Townships]
+                            SET  [RegionId] = @RegionId
+                                ,[DivisionId] = @DivisionId
+                                ,[Name] = @Name
+                                ,[Description] = @Description
+                            WHERE TownshipId = @TownshipId;";
+
+            Dictionary<string, object> parameters = new()
+            {
+                { "@TownshipId", id.ToString() },
+                { "@RegionId", model.RegionId.ToString() },
+                { "@DivisionId", model.DivisionId.ToString() },
+                { "@Name", model.Name },
+                { "@Description", model.Description },
+            };
+
+            return (query, parameters);
+        }
+
+        private static (string, Dictionary<string, object>) GetDeleteQueryAndParameters(int id)
+        {
+            string query = @"DELETE [dbo].[Townships]
+                            WHERE TownshipId = @TownshipId;";
+
+            Dictionary<string, object> parameters = new()
+            {
+                { "@TownshipId", id.ToString() },
             };
 
             return (query, parameters);
