@@ -5,7 +5,6 @@ using ATMS.Web.Dto.Models;
 using ATMS.Web.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using System.Net.Mime;
 using System.Text.Json;
 
@@ -15,8 +14,9 @@ namespace ATMS.Web.BankMvc.Controllers
     {
         private readonly AdoDotNetService _adoDotNetService;
         private readonly JsonSerializerOptions _jsonOption;
-
-        public ATMLocationController(AdoDotNetService adoDotNetService)
+        private readonly ILogger<ATMLocationController> _logger;
+        private readonly JsonSerializerOptions _options;
+        public ATMLocationController(AdoDotNetService adoDotNetService, ILogger<ATMLocationController> logger)
         {
             _adoDotNetService = adoDotNetService;
 
@@ -25,6 +25,8 @@ namespace ATMS.Web.BankMvc.Controllers
             {
                 PropertyNamingPolicy = null // Disable any naming policy
             };
+            _options = new() { WriteIndented = true };
+            _logger = logger;
         }
 
         #region CRUD
@@ -80,6 +82,8 @@ namespace ATMS.Web.BankMvc.Controllers
 
             // Serialize your data using the specified options
             var data = JsonSerializer.Serialize(response, _jsonOption);
+
+            _logger.LogInformation(message: data);
 
             return Content(data, MediaTypeNames.Application.Json);
         }
@@ -308,7 +312,7 @@ namespace ATMS.Web.BankMvc.Controllers
                 DivisionId = aTMLocation.DivisionId,
                 TownshipId = aTMLocation.TownshipId,
                 Address = aTMLocation?.Address,
-                Status= aTMLocation!.Status
+                Status = aTMLocation!.Status
             };
         }
 
