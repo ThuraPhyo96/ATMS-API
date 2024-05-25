@@ -33,5 +33,7 @@ namespace ATMS.Web.BankMvc.Data
         public DbSet<BankName> BankNames { get; set; }
         public DbSet<BankBranchName> BankBranchNames { get; set; }
         public DbSet<ATMLocation> ATMLocations { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserSession> UserSessions { get; set; }
     }
 }
