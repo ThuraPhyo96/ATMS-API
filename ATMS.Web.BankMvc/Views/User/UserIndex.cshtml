@@ -1,0 +1,30 @@
+﻿@model List<UserViewModel>
+
+<a asp-controller="User" asp-action="Create" class="btn btn-primary">New</a>
+
+<table id="userGrid" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th></th>
+            <th>User Name</th>
+            <th>Password</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th>
+                    <a asp-controller="User" asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-secondary">Edit</a>
+                </th>
+                <td>@item.Username</td>
+                <td>@item.Password</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts
+{
+    <script src="~/scripts/user/userindex.js" asp-append-version="true"></script>
+}

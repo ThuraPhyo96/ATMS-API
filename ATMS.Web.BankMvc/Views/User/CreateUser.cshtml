@@ -1,0 +1,33 @@
+﻿@model CreateUserViewModel
+
+<h4>Add User</h4>
+<hr />
+<form id="createUserForm">
+    <div class="row mb-3">
+        <label asp-for="Username" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="Username" class="form-control"></>
+            <span asp-validation-for="Username" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label asp-for="Password" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input type="password" asp-for="Password" class="form-control"></>
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label asp-for="ConfirmPassword" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input type="password" asp-for="ConfirmPassword" class="form-control"></>
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary saveBtn">Save</button>
+</form>
+
+@section Scripts {
+    <script src="~/scripts/user/createuser.js" asp-append-version="true"></script>
+}
