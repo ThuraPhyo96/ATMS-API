@@ -1,4 +1,5 @@
 using ATMS.Web.BankMvc.Data;
+using ATMS.Web.BankMvc.Hubs;
 using ATMS.Web.Shared;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -37,6 +38,7 @@ try
 
     // Add services to the container.
     builder.Services.AddControllersWithViews();
+    builder.Services.AddSignalR();
 
     var app = builder.Build();
 
@@ -75,6 +77,7 @@ try
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
+    app.MapHub<ChatHub>("/chatHub");
     app.Run();
 }
 catch (Exception ex)
