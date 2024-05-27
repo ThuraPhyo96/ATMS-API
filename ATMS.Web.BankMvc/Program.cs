@@ -1,3 +1,4 @@
+using ATMS.Web.BankMvc;
 using ATMS.Web.BankMvc.Data;
 using ATMS.Web.BankMvc.Hubs;
 using ATMS.Web.Shared;
@@ -26,12 +27,14 @@ try
     var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSerilog();
     // Register DB Context as Transient because of middle ware usage and by default, it is scoped lifetime
-    builder.Services.AddDbContext<ApplicationDBContext>(options =>
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    },
-    optionsLifetime: ServiceLifetime.Transient,
-    contextLifetime: ServiceLifetime.Transient);
+    //builder.Services.AddDbContext<ApplicationDBContext>(options =>
+    //{
+    //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    //},
+    //optionsLifetime: ServiceLifetime.Transient,
+    //contextLifetime: ServiceLifetime.Transient);
+
+    builder.Services.RegisterDBContext(builder.Configuration.GetConnectionString("DefaultConnection")!);
 
     builder.Services.AddScoped(n => new AdoDotNetService(builder.Configuration.GetConnectionString("DefaultConnection")!));
     builder.Services.AddScoped(n => new DapperService(builder.Configuration.GetConnectionString("DefaultConnection")!));
