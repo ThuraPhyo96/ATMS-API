@@ -11,6 +11,6 @@ namespace ATMS.Web.Dto.Models
         public Guid UserId { get; set; }
         public User User { get; set; }
 
-        public int SessionInterval { get; set; }
+        public DateTime SessionInterval { get; set; }
     }
 }
