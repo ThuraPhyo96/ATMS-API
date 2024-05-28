@@ -1,5 +1,6 @@
 ﻿using ATM.Web.ViewModels;
 using ATMS.Web.Dto.Dtos;
+using ATMS.Web.Dto.Models;
 using ATMS.Web.Shared;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
@@ -16,15 +17,9 @@ namespace ATMS.Web.BankMvc.Controllers
         }
 
         [ActionName("Index")]
-        public IActionResult Login(string username, string password)
+        public IActionResult Login()
         {
             LoginViewModel model = new();
-            if (!string.IsNullOrEmpty(username))
-                model.Username = username;
-
-            if (!string.IsNullOrEmpty(password))
-                model.Password = password;
-
             return View("LoginIndex", model);
         }
 
@@ -37,9 +32,27 @@ namespace ATMS.Web.BankMvc.Controllers
             var record = dtos.FirstOrDefault();
 
             if (record is null)
-                return RedirectToAction("Index", "Account", new { username = model.Username, password = model.Password });
-            else
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Account");
+
+            DateTime sessionInteval = DateTime.Now.AddSeconds(45);
+            var cookieOptions = new CookieOptions
+            {
+                Expires = sessionInteval,
+            };
+
+            (string createQuery, Dictionary<string, object> createParameters) = GetCreateQueryAndParameters(record.UserId, sessionInteval);
+            var effectRow = _dapperService.Execute(createQuery, createParameters);
+            if (effectRow > 0)
+            {
+                (string getQuery, Dictionary<string, object> getParameters) = GetUserSessionQueryAndParameters(record.UserId);
+                var userSessions = _dapperService.Query<UserSessionDto>(getQuery, getParameters);
+                var userSession = userSessions.FirstOrDefault();
+
+                Response.Cookies.Append("UserId", userSession!.UserId.ToString(), cookieOptions);
+                Response.Cookies.Append("UserSessionId", userSession!.UserSessionId.ToString(), cookieOptions);
+            }
+
+            return RedirectToAction("Index", "Home");
         }
 
         private static (string, Dictionary<string, object>) GetQueryAndParameters(string username, string password)
@@ -54,5 +67,41 @@ namespace ATMS.Web.BankMvc.Controllers
 
             return (query, parameters);
         }
+
+        private static (string, Dictionary<string, object>) GetCreateQueryAndParameters(Guid userId, DateTime sessionInterval)
+        {
+            string query = @"INSERT INTO [dbo].[UserSessions]
+                                               ([UserSessionId]
+                                                ,[UserId]
+                                                ,[SessionInterval]
+                                               )
+                                         VALUES
+                                               (@UserSessionId
+                                               ,@UserId
+                                               ,@SessionInterval
+                                               )";
+
+            Dictionary<string, object> parameters = new()
+            {
+                { "@UserSessionId", Guid.NewGuid() },
+                { "@UserId", userId },
+                { "@SessionInterval", sessionInterval}
+            };
+
+            return (query, parameters);
+        }
+
+        private static (string, Dictionary<string, object>) GetUserSessionQueryAndParameters(Guid userId)
+        {
+            string query = @"SELECT * FROM UserSessions WHERE UserId = @UserId";
+
+            Dictionary<string, object> parameters = new()
+            {
+                { "@UserId", userId },
+            };
+
+            return (query, parameters);
+        }
+
     }
 }
