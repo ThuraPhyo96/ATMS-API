@@ -1,6 +1,7 @@
 using ATMS.Web.BankMvc;
 using ATMS.Web.BankMvc.Data;
 using ATMS.Web.BankMvc.Hubs;
+using ATMS.Web.BankMvc.Middlewares;
 using ATMS.Web.Shared;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -70,6 +71,9 @@ try
     }
 
     app.UseHttpsRedirection();
+
+    app.UseLoginMiddleware();
+
     app.UseStaticFiles();
 
     app.UseRouting();
