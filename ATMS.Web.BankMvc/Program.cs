@@ -72,13 +72,13 @@ try
 
     app.UseHttpsRedirection();
 
-    app.UseLoginMiddleware();
-
     app.UseStaticFiles();
 
     app.UseRouting();
 
     app.UseAuthorization();
+
+    app.UseLoginMiddleware();
 
     app.MapControllerRoute(
         name: "default",

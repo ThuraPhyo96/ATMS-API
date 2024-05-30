@@ -46,7 +46,7 @@ namespace ATMS.Web.BankMvc.Middlewares
             }
 
             DateTime sessionInterval = userSession.SessionInterval;
-            if (sessionInterval < DateTime.Now)
+            if (sessionInterval > DateTime.Now)
             {
                 context.Response.Redirect("/Account/Index");
                 goto result;
