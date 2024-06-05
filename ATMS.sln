@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATM.Web.Helpers", "ATM.Web.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATMS.Web.Shared", "ATMS.Web.Shared\ATMS.Web.Shared.csproj", "{C84033FD-66FA-4985-B37A-8C71FBA37F46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATMS.Web.BlazarServer", "ATMS.Web.BlazarServer\ATMS.Web.BlazarServer.csproj", "{5B5A6BC9-FED0-4145-8003-C2E3F44B9097}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATMS.Web.BlazarServer", "ATMS.Web.BlazarServer\ATMS.Web.BlazarServer.csproj", "{5B5A6BC9-FED0-4145-8003-C2E3F44B9097}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

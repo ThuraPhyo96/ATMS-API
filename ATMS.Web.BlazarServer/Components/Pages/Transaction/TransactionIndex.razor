@@ -1,0 +1,62 @@
+﻿@page "/transaction"
+@inject ApplicationDBContext _dbContext
+@attribute [StreamRendering]
+
+<PageTitle>Transaction</PageTitle>
+
+<h1>Transaction</h1>
+
+<NavLink class="nav-link" href="createtransaction">
+    <button class="btn btn-primary" aria-hidden="true">New</button>
+</NavLink>
+
+@if (transactions == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Note</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in transactions)
+            {
+                <tr>
+                    <td>@TransactionType(item.TransactionType)</td>
+                    <td>@item.TransactionDate.ToString("dd-MMM-yyyy HH:mm")</td>
+                    <td>@item.Category</td>
+                    <td>@item.Amount.ToString("#,##0.00")</td>
+                    <td>@item.Note</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private List<SpendTransaction>? transactions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Simulate asynchronous loading to demonstrate streaming rendering
+        await Task.Delay(500);
+
+        transactions = await _dbContext.SpendTransactions
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    private string TransactionType(int type)
+    {
+        return Helper.GetEnumDescriptionByValue<ESpendTransactionTypes>(type)!;
+    }
+}

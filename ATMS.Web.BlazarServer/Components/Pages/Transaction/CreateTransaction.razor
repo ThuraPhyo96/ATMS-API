@@ -1,0 +1,74 @@
+﻿@page "/createtransaction"
+@using Microsoft.AspNetCore.Mvc.Rendering
+@inject ApplicationDBContext _dbContext
+@inject NavigationManager NavManager
+@rendermode InteractiveServer
+
+<h4>Add Transaction</h4>
+<hr />
+
+<div class="row mb-3">
+    <label class="col-sm-2 col-form-label">Type</label>
+    <div class="col-sm-10">
+        <select @bind="spendTransaction.TransactionType" class="form-control">
+            @foreach (var type in selectListItems)
+            {
+                <option value="@type.Value">@type.Text</option>
+            }
+        </select>
+    </div>
+</div>
+<div class="row mb-3">
+    <label class="col-sm-2 col-form-label">Date</label>
+    <div class="col-sm-10">
+        <input type="text" class="form-control" @bind-value="spendTransaction.TransactionDate" />
+    </div>
+</div>
+<div class="row mb-3">
+    <label class="col-sm-2 col-form-label">Category</label>
+    <div class="col-sm-10">
+        <input type="text" class="form-control" @bind-value="spendTransaction.Category" />
+    </div>
+</div>
+<div class="row mb-3">
+    <label class="col-sm-2 col-form-label">Amount</label>
+    <div class="col-sm-10">
+        <input type="number" class="form-control" @bind-value="spendTransaction.Amount" />
+    </div>
+</div>
+<div class="row mb-3">
+    <label class="col-sm-2 col-form-label">Note</label>
+    <div class="col-sm-10">
+        <textarea rows="3" class="form-control" @bind="spendTransaction.Note"></textarea>
+    </div>
+</div>
+
+<button class="btn btn-primary" @onclick="Save">Save</button>
+@code {
+    private SpendTransaction spendTransaction = new();
+    private List<SelectListItem> selectListItems = new List<SelectListItem>();
+
+    protected override void OnInitialized()
+    {
+        SelectListItem expenseItem = new()
+            {
+                Value = ((int)ESpendTransactionTypes.Expense).ToString(),
+                Text = Helper.GetEnumDescriptionByValue<ESpendTransactionTypes>((int)ESpendTransactionTypes.Expense)
+            };
+
+        SelectListItem incomeItem = new()
+            {
+                Value = ((int)ESpendTransactionTypes.Income).ToString(),
+                Text = Helper.GetEnumDescriptionByValue<ESpendTransactionTypes>((int)ESpendTransactionTypes.Income)
+            };
+        selectListItems.Add(expenseItem);
+        selectListItems.Add(incomeItem);
+    }
+
+    private async Task Save()
+    {
+        await _dbContext.AddAsync(spendTransaction);
+        await _dbContext.SaveChangesAsync();
+        NavManager.NavigateTo("/transaction");
+    }
+}

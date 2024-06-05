@@ -1,3 +1,4 @@
+using ATMS.Web.BlazarServer;
 using ATMS.Web.BlazarServer.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.RegisterDBContext(builder.Configuration.GetConnectionString("DefaultConnection")!);
 
 var app = builder.Build();
 
