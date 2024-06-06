@@ -1,5 +1,7 @@
 ﻿@page "/transaction"
 @inject ApplicationDBContext _dbContext
+@rendermode InteractiveServer
+@inject NavigationManager NavManager
 @attribute [StreamRendering]
 
 <PageTitle>Transaction</PageTitle>
@@ -19,6 +21,7 @@ else
     <table class="table">
         <thead>
             <tr>
+                <th></th>
                 <th>Type</th>
                 <th>Date</th>
                 <th>Category</th>
@@ -30,6 +33,10 @@ else
             @foreach (var item in transactions)
             {
                 <tr>
+                    <td>
+                        <button class="btn btn-warning" @onclick="() => Edit(item.SpendTransactionId)">Edit</button>
+                        <button class="btn btn-danger" @onclick="() => Delete(item.SpendTransactionId)">Delete</button>
+                    </td>
                     <td>@TransactionType(item.TransactionType)</td>
                     <td>@item.TransactionDate.ToString("dd-MMM-yyyy HH:mm")</td>
                     <td>@item.Category</td>
@@ -58,5 +65,32 @@ else
     private string TransactionType(int type)
     {
         return Helper.GetEnumDescriptionByValue<ESpendTransactionTypes>(type)!;
+    }
+
+    private void Edit(int id)
+    {
+        if (id == 0)
+            return;
+
+        NavManager.NavigateTo($"/edittransaction/{id}");
+    }
+
+    private async Task Delete(int id)
+    {
+        if (id == 0)
+            return;
+
+        var obj = await _dbContext.SpendTransactions.FirstOrDefaultAsync(x => x.SpendTransactionId.Equals(id));
+        if (obj is not null)
+        {
+            _dbContext.SpendTransactions.Remove(obj);
+            await _dbContext.SaveChangesAsync();
+
+            transactions = await _dbContext.SpendTransactions
+                .AsNoTracking()
+                .ToListAsync();
+
+            StateHasChanged();
+        }
     }
 }
