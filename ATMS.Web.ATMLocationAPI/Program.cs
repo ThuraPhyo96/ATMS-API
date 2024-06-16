@@ -3,7 +3,20 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ATMS.Web.ATMLocationAPI.AppServices;
 
+var allowSpecificOrigins = "_allowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(allowSpecificOrigins,
+                          policy =>
+                          {
+                              policy.WithOrigins("https://localhost:7158")
+                                                  .AllowAnyHeader()
+                                                  .AllowAnyMethod();
+                          });
+});
 
 // Add services to the container.
 
@@ -56,7 +69,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors(allowSpecificOrigins);
 app.UseAuthorization();
 
 app.MapControllers();

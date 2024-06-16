@@ -1,0 +1,65 @@
+﻿@page "/atm"
+@using global::ATM.Web.Helpers
+@inject HttpClient HttpClient
+<PageTitle>ATM Location</PageTitle>
+
+<h3>ATM Location</h3>
+
+@if (location == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Bank Name</th>
+                <th>Bank Branch Name</th>
+                <th>Region</th>
+                <th>Division</th>
+                <th>Township</th>
+                <th>Address</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in location.Data)
+            {
+                <tr>
+                    @*  <td>
+            <button class="btn btn-warning" @onclick="() => Edit(item.SpendTransactionId)">Edit</button>
+            <button class="btn btn-danger" @onclick="() => Delete(item.SpendTransactionId)">Delete</button>
+            </td> *@
+                    <td>@item.BankName.Name</td>
+                    <td>@(item.BankBranchName != null ? item.BankBranchName.Name : "")</td>
+                    <td>@(item.Region != null ? item.Region.Name : "")</td>
+                    <td>@(item.Division != null ? item.Division.Name : "") </td>
+                    <td>@(item.Township != null ? item.Township.Name : "")</td>
+                    <td>@item.Address</td>
+                    <td>@Status(item.Status)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private ATMLocationListDto? location;
+    private readonly string _apiEndPoint = "api/ATMLocation";
+    private string bankName = "Kanbawza Bank";
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Simulate asynchronous loading to demonstrate streaming rendering
+        await Task.Delay(500);
+        HttpResponseMessage httpResponse = await HttpClient.GetAsync($"{_apiEndPoint}/{bankName}");
+
+        if (httpResponse.IsSuccessStatusCode)
+        {
+            location = JsonConvert.DeserializeObject<ATMLocationListDto>(await httpResponse.Content.ReadAsStringAsync())!;
+        }
+    }
+
+    private string Status(int type) => Helper.GetEnumDescriptionByValue<EATMStatus>(type)!;
+}
